@@ -3,8 +3,8 @@ import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { fetchJson } from '../lib/api'
 import type { InvitationBundle } from '../types/invitation'
-import DecorativeFrame from '../components/invitation/DecorativeFrame.vue'
 import EnvelopeGate from '../components/invitation/EnvelopeGate.vue'
+import InvitationPastelBackdrop from '../components/invitation/InvitationPastelBackdrop.vue'
 import FloatingTicketBtn from '../components/invitation/FloatingTicketBtn.vue'
 import CarouselHero from '../components/invitation/CarouselHero.vue'
 import SectionFormalInvite from '../components/invitation/SectionFormalInvite.vue'
@@ -93,34 +93,36 @@ const quinceName = computed(() => bundle.value?.event?.name || 'Hanna')
     </EnvelopeGate>
 
     <div
-      class="relative min-h-svh bg-gradient-to-b from-lilac-100 via-white to-lilac-50 pb-24 pl-8 pr-8 sm:pl-14 sm:pr-14 md:pl-20 md:pr-20"
+      class="relative isolate min-h-svh bg-white pb-24 pl-8 pr-8 sm:pl-14 sm:pr-14 md:pl-20 md:pr-20"
     >
-      <DecorativeFrame />
-      <FloatingTicketBtn />
+      <InvitationPastelBackdrop v-if="!showEnvelope" />
+      <div class="relative z-[1]">
+        <FloatingTicketBtn />
 
-      <CarouselHero :slides="bundle.carousel?.slides || []" />
+        <CarouselHero :slides="bundle.carousel?.slides || []" />
 
-      <SectionFormalInvite :family-name="bundle.family.family_name" :quince-name="quinceName" />
+        <SectionFormalInvite :family-name="bundle.family.family_name" :quince-name="quinceName" />
 
-      <SectionSponsors :sponsors="bundle.sponsors" />
+        <SectionSponsors :sponsors="bundle.sponsors" />
 
-      <SectionVenue :venues="bundle.venues" :event-date="bundle.event?.event_date || null" />
+        <SectionVenue :venues="bundle.venues" :event-date="bundle.event?.event_date || null" />
 
-      <SectionSchedule :items="bundle.schedule" />
+        <SectionSchedule :items="bundle.schedule" />
 
-      <SectionDressCode />
+        <SectionDressCode />
 
-      <SectionGifts />
+        <SectionGifts />
 
-      <SectionRsvp
-        v-if="familyId"
-        :family-id="familyId"
-        :guests="bundle.guests"
-        :extra-ticket-quantity="bundle.extraTicketQuantity"
-        @refresh="load"
-      />
+        <SectionRsvp
+          v-if="familyId"
+          :family-id="familyId"
+          :guests="bundle.guests"
+          :extra-ticket-quantity="bundle.extraTicketQuantity"
+          @refresh="load"
+        />
 
-      <SectionSurpriseMessage v-if="familyId" :family-id="familyId" />
+        <SectionSurpriseMessage v-if="familyId" :family-id="familyId" />
+      </div>
     </div>
   </template>
 </template>
