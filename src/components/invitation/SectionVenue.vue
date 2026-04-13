@@ -1,0 +1,245 @@
+<script setup lang="ts">
+import { computed, onMounted, onUnmounted, ref } from 'vue'
+import type { VenueRow } from '../../types/invitation'
+import { googleMapsSearchUrl } from '../../lib/maps'
+
+const props = defineProps<{
+  venues: VenueRow[]
+  eventDate: string | null
+  extraNotes?: string
+}>()
+
+const now = ref(Date.now())
+let tick: ReturnType<typeof setInterval> | null = null
+
+onMounted(() => {
+  tick = setInterval(() => {
+    now.value = Date.now()
+  }, 1000)
+})
+onUnmounted(() => {
+  if (tick) clearInterval(tick)
+})
+
+const misa = computed(() => props.venues.find((v) => v.type === 'misa'))
+const fiesta = computed(() => props.venues.find((v) => v.type === 'fiesta'))
+
+function parseLocalDate(dateStr: string | null | undefined): Date | null {
+  if (!dateStr) return null
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateStr)
+  if (!m) return null
+  const y = Number(m[1])
+  const mo = Number(m[2])
+  const d = Number(m[3])
+  return new Date(y, mo - 1, d, 0, 0, 0, 0)
+}
+
+function misaDateTime(): Date | null {
+  const d0 = parseLocalDate(props.eventDate)
+  const m = misa.value
+  if (!d0 || !m?.start_time) return null
+  const t = m.start_time
+  const parts = t.split(':')
+  const hh = Number(parts[0] ?? 0)
+  const mm = Number(parts[1] ?? 0)
+  const ss = Number(parts[2] ?? 0)
+  return new Date(d0.getFullYear(), d0.getMonth(), d0.getDate(), hh, mm, ss || 0, 0)
+}
+
+const countdown = computed(() => {
+  const target = misaDateTime()
+  if (!target) return null
+  let ms = target.getTime() - now.value
+  if (ms < 0) ms = 0
+  const s = Math.floor(ms / 1000)
+  const days = Math.floor(s / 86400)
+  const hours = Math.floor((s % 86400) / 3600)
+  const minutes = Math.floor((s % 3600) / 60)
+  const seconds = s % 60
+  return { days, hours, minutes, seconds }
+})
+
+const calendar = computed(() => {
+  const d0 = parseLocalDate(props.eventDate)
+  if (!d0) return null
+  const y = d0.getFullYear()
+  const m = d0.getMonth()
+  const firstDow = new Date(y, m, 1).getDay()
+  const daysInMonth = new Date(y, m + 1, 0).getDate()
+  const eventDay = d0.getDate()
+  const cells: { day: number | null; isEvent: boolean }[] = []
+  for (let i = 0; i < firstDow; i++) cells.push({ day: null, isEvent: false })
+  for (let d = 1; d <= daysInMonth; d++) cells.push({ day: d, isEvent: d === eventDay })
+  while (cells.length % 7 !== 0) cells.push({ day: null, isEvent: false })
+  return {
+    y,
+    m,
+    label: d0.toLocaleDateString('es-MX', { month: 'long', year: 'numeric' }),
+    cells,
+    eventDay,
+  }
+})
+
+function formatTime(t: string | null | undefined): string {
+  if (!t) return ''
+  const [hh, mm] = t.split(':')
+  const h = Number(hh)
+  const ampm = h >= 12 ? 'p. m.' : 'a. m.'
+  const h12 = ((h + 11) % 12) + 1
+  return `${h12}:${(mm || '00').padStart(2, '0')} ${ampm}`
+}
+</script>
+
+<template>
+  <section
+    id="fecha-lugar"
+    class="relative min-h-[150svh] bg-gradient-to-b from-lilac-100 via-white to-lilac-50 px-5 py-16 sm:px-10 md:py-24"
+  >
+    <div class="mx-auto max-w-3xl">
+      <h2 class="text-center font-display text-4xl text-lilac-700 sm:text-5xl">¿Cuándo y dónde?</h2>
+      <p v-if="eventDate" class="mt-4 text-center font-sans text-lg text-slate-700">
+        Día del evento:
+        <span class="font-semibold text-lilac-700">{{
+          parseLocalDate(eventDate)?.toLocaleDateString('es-MX', {
+            weekday: 'long',
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+          })
+        }}</span>
+      </p>
+
+      <div
+        class="mt-10 rounded-3xl border border-lilac-200 bg-white/95 p-6 shadow-paper sm:p-8"
+      >
+        <p class="text-center font-script text-2xl text-lilac-600">Cuenta regresiva para la misa</p>
+        <div
+          v-if="countdown"
+          class="mt-4 grid grid-cols-2 gap-3 font-sans text-center sm:grid-cols-4"
+        >
+          <div class="rounded-2xl bg-lilac-50 px-3 py-4">
+            <p class="text-3xl font-bold text-lilac-700">{{ countdown.days }}</p>
+            <p class="text-xs uppercase tracking-wide text-slate-500">días</p>
+          </div>
+          <div class="rounded-2xl bg-lilac-50 px-3 py-4">
+            <p class="text-3xl font-bold text-lilac-700">{{ countdown.hours }}</p>
+            <p class="text-xs uppercase tracking-wide text-slate-500">horas</p>
+          </div>
+          <div class="rounded-2xl bg-lilac-50 px-3 py-4">
+            <p class="text-3xl font-bold text-lilac-700">{{ countdown.minutes }}</p>
+            <p class="text-xs uppercase tracking-wide text-slate-500">min</p>
+          </div>
+          <div class="rounded-2xl bg-lilac-50 px-3 py-4">
+            <p class="text-3xl font-bold text-lilac-700">{{ countdown.seconds }}</p>
+            <p class="text-xs uppercase tracking-wide text-slate-500">seg</p>
+          </div>
+        </div>
+        <p v-else class="mt-4 text-center font-sans text-sm text-slate-500">
+          Configura la fecha del evento y el horario de misa en la base de datos para ver la cuenta
+          regresiva.
+        </p>
+      </div>
+
+      <div
+        v-if="calendar"
+        class="mt-10 rounded-3xl border border-lilac-200 bg-white/95 p-6 shadow-paper sm:p-8"
+      >
+        <p class="text-center font-sans text-sm font-semibold uppercase tracking-wide text-lilac-600">
+          Calendario
+        </p>
+        <p class="text-center font-display text-3xl capitalize text-lilac-800">{{ calendar.label }}</p>
+        <div class="mt-4 grid grid-cols-7 gap-1 text-center text-xs font-semibold text-slate-500">
+          <span>Dom</span>
+          <span>Lun</span>
+          <span>Mar</span>
+          <span>Mié</span>
+          <span>Jue</span>
+          <span>Vie</span>
+          <span>Sáb</span>
+        </div>
+        <div class="mt-2 grid grid-cols-7 gap-1 text-center text-sm">
+          <span
+            v-for="(c, i) in calendar.cells"
+            :key="i"
+            class="rounded-lg py-2 font-sans"
+            :class="
+              c.day == null
+                ? 'text-transparent'
+                : c.isEvent
+                  ? 'bg-lilac-500 font-bold text-white shadow-md'
+                  : 'bg-lilac-50/80 text-slate-700'
+            "
+          >
+            {{ c.day != null ? c.day : '' }}
+          </span>
+        </div>
+      </div>
+
+      <div class="mt-12 grid gap-8 md:grid-cols-2">
+        <article
+          v-if="misa"
+          class="rounded-3xl border border-lilac-200 bg-white/95 p-6 shadow-paper sm:p-7"
+        >
+          <div class="flex items-start gap-3">
+            <span class="text-3xl" aria-hidden="true">⛪</span>
+            <div>
+              <h3 class="font-script text-2xl text-lilac-700">Misa</h3>
+              <p class="mt-1 font-sans text-base font-semibold text-slate-800">{{ misa.name }}</p>
+              <p class="mt-2 font-sans text-sm leading-relaxed text-slate-600">{{ misa.address }}</p>
+              <p class="mt-2 font-sans text-sm text-lilac-700">
+                Horario: {{ formatTime(misa.start_time) }}
+                <span v-if="misa.end_time"> — {{ formatTime(misa.end_time) }}</span>
+              </p>
+              <a
+                v-if="misa.address"
+                class="mt-4 inline-flex items-center rounded-full bg-lilac-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-lilac-500"
+                :href="googleMapsSearchUrl(`${misa.name || ''} ${misa.address}`)"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Ver en Google Maps
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <article
+          v-if="fiesta"
+          class="rounded-3xl border border-lilac-200 bg-white/95 p-6 shadow-paper sm:p-7"
+        >
+          <div class="flex items-start gap-3">
+            <span class="text-3xl" aria-hidden="true">🎉</span>
+            <div>
+              <h3 class="font-script text-2xl text-lilac-700">Fiesta</h3>
+              <p class="mt-1 font-sans text-base font-semibold text-slate-800">{{ fiesta.name }}</p>
+              <p class="mt-2 font-sans text-sm leading-relaxed text-slate-600">{{ fiesta.address }}</p>
+              <p class="mt-2 font-sans text-sm text-lilac-700">
+                Horario: {{ formatTime(fiesta.start_time) }}
+                <span v-if="fiesta.end_time"> — {{ formatTime(fiesta.end_time) }}</span>
+              </p>
+              <a
+                v-if="fiesta.address"
+                class="mt-4 inline-flex items-center rounded-full bg-lilac-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-lilac-500"
+                :href="googleMapsSearchUrl(`${fiesta.name || ''} ${fiesta.address}`)"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Ver en Google Maps
+              </a>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="mt-12 rounded-3xl border border-lilac-200 bg-white/95 p-6 shadow-paper sm:p-8">
+        <h3 class="text-center font-display text-3xl text-lilac-700">Indicaciones adicionales</h3>
+        <p class="mt-4 font-sans text-base leading-relaxed text-slate-700">
+          {{
+            extraNotes ||
+            'Llega con unos minutos de anticipación para la misa. Después de la ceremonia te compartiremos el acceso al salón. Si vienes en auto, considera el tráfico y el estacionamiento cercano a cada ubicación.'
+          }}
+        </p>
+      </div>
+    </div>
+  </section>
+</template>
