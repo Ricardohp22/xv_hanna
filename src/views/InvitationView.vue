@@ -30,10 +30,6 @@ const loadError = ref<string | null>(null)
 const loading = ref(false)
 const showEnvelope = ref(true)
 
-function envelopeKey(id: number) {
-  return `xv_envelope_opened_${id}`
-}
-
 async function load() {
   loadError.value = null
   bundle.value = null
@@ -57,19 +53,11 @@ watch(
   { immediate: true }
 )
 
-watch(
-  [familyId, bundle],
-  () => {
-    const id = familyId.value
-    if (!id || !bundle.value) return
-    showEnvelope.value = !sessionStorage.getItem(envelopeKey(id))
-  },
-  { immediate: true }
-)
+watch(familyId, () => {
+  showEnvelope.value = true
+})
 
 function onEnvelopeOpened() {
-  const id = familyId.value
-  if (id) sessionStorage.setItem(envelopeKey(id), '1')
   showEnvelope.value = false
 }
 
