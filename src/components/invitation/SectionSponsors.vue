@@ -1,11 +1,24 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import SectionPaper from './SectionPaper.vue'
 import type { SponsorRow } from '../../types/invitation'
 
 const props = defineProps<{
   sponsors: SponsorRow[]
 }>()
+
+/** Convención fija (sin columna en DB): `public/padrinos/<id>.jpg` */
+function sponsorPhotoSrc(id: number) {
+  return `/padrinos/${id}.jpg`
+}
+
+const photoLoadFailed = ref<Set<number>>(new Set())
+
+function onSponsorPhotoError(id: number) {
+  const next = new Set(photoLoadFailed.value)
+  next.add(id)
+  photoLoadFailed.value = next
+}
 
 const leftColumn = computed(() => {
   const list = props.sponsors
@@ -23,50 +36,69 @@ const rightColumn = computed(() => {
 </script>
 
 <template>
-  <SectionPaper id="padrinos">
+  <SectionPaper id="padrinos" wide>
     <h2 class="text-center font-display text-4xl text-lilac-700 sm:text-5xl">Mis padrinos</h2>
     <p class="mt-3 text-center font-sans text-sm text-slate-600">
       Gracias por caminar a mi lado en este sueño.
     </p>
 
-    <div v-if="sponsors.length" class="mt-10 flex flex-col md:flex-row md:items-stretch">
-      <ul class="flex-1 space-y-6 md:pr-3 lg:pr-5">
-        <li v-for="s in leftColumn" :key="s.id" class="text-left">
-          <p class="font-sans text-base font-semibold text-slate-800">{{ s.name }}</p>
-          <p class="mt-0.5 font-sans text-sm text-lilac-700">{{ s.role || 'Padrino / Madrina' }}</p>
+    <div
+      v-if="sponsors.length"
+      class="mt-10 grid grid-cols-1 gap-10 md:grid-cols-2 md:gap-x-0 md:gap-y-10"
+    >
+      <ul class="flex flex-col gap-8 md:pr-8">
+        <li v-for="s in leftColumn" :key="s.id" class="flex flex-row items-center gap-3.5 text-left">
+          <div
+            class="relative flex h-16 w-16 shrink-0 overflow-hidden rounded-2xl border border-lilac-200/85 bg-gradient-to-br from-white to-lilac-50 shadow-[0_2px_8px_rgba(99,79,160,0.12)] ring-1 ring-lilac-100/60 sm:h-[4.5rem] sm:w-[4.5rem]"
+          >
+            <img
+              v-if="!photoLoadFailed.has(s.id)"
+              :src="sponsorPhotoSrc(s.id)"
+              alt=""
+              class="h-full w-full object-cover"
+              loading="lazy"
+              decoding="async"
+              @error="onSponsorPhotoError(s.id)"
+            />
+            <span
+              v-else
+              class="flex h-full w-full items-center justify-center px-1 text-center font-sans text-[9px] font-medium leading-tight text-lilac-400"
+            >
+              Imagen alusiva
+            </span>
+          </div>
+          <div class="min-w-0 flex-1">
+            <p class="font-sans text-base font-semibold text-slate-800">{{ s.name }}</p>
+            <p class="mt-0.5 font-sans text-sm text-lilac-700">{{ s.role || 'Padrino / Madrina' }}</p>
+          </div>
         </li>
       </ul>
 
-      <div
-        class="relative my-8 flex shrink-0 items-center justify-center gap-3 md:my-0 md:w-10 md:flex-col md:gap-0 md:self-stretch lg:w-12"
-        aria-hidden="true"
-      >
-        <div
-          class="h-px flex-1 bg-gradient-to-r from-transparent via-lilac-400 to-lilac-400/80 md:hidden"
-        />
-        <div
-          class="hidden h-full w-px bg-gradient-to-b from-lilac-200/40 via-lilac-400 to-lilac-200/40 md:block"
-        />
-        <div
-          class="flex h-12 w-12 items-center justify-center rounded-full border border-lilac-200/90 bg-gradient-to-br from-white to-lilac-50 shadow-sm md:absolute md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2"
-        >
-          <img
-            src="/mariposa_icon.png"
-            alt=""
-            class="h-8 w-8 object-contain opacity-90 drop-shadow-[0_1px_3px_rgba(99,79,180,0.35)] "
-            loading="lazy"
-            decoding="async"
-          />
-        </div>
-        <div
-          class="h-px flex-1 bg-gradient-to-l from-transparent via-lilac-400 to-lilac-400/80 md:hidden"
-        />
-      </div>
-
-      <ul class="flex-1 space-y-6 md:pl-3 lg:pl-5">
-        <li v-for="s in rightColumn" :key="s.id" class="text-left">
-          <p class="font-sans text-base font-semibold text-slate-800">{{ s.name }}</p>
-          <p class="mt-0.5 font-sans text-sm text-lilac-700">{{ s.role || 'Padrino / Madrina' }}</p>
+      <ul class="flex flex-col gap-8 md:border-l md:border-lilac-200/50 md:pl-8">
+        <li v-for="s in rightColumn" :key="s.id" class="flex flex-row items-center gap-3.5 text-left">
+          <div
+            class="relative flex h-16 w-16 shrink-0 overflow-hidden rounded-2xl border border-lilac-200/85 bg-gradient-to-br from-white to-lilac-50 shadow-[0_2px_8px_rgba(99,79,160,0.12)] ring-1 ring-lilac-100/60 sm:h-[4.5rem] sm:w-[4.5rem]"
+          >
+            <img
+              v-if="!photoLoadFailed.has(s.id)"
+              :src="sponsorPhotoSrc(s.id)"
+              alt=""
+              class="h-full w-full object-cover"
+              loading="lazy"
+              decoding="async"
+              @error="onSponsorPhotoError(s.id)"
+            />
+            <span
+              v-else
+              class="flex h-full w-full items-center justify-center px-1 text-center font-sans text-[9px] font-medium leading-tight text-lilac-400"
+            >
+              Imagen alusiva
+            </span>
+          </div>
+          <div class="min-w-0 flex-1">
+            <p class="font-sans text-base font-semibold text-slate-800">{{ s.name }}</p>
+            <p class="mt-0.5 font-sans text-sm text-lilac-700">{{ s.role || 'Padrino / Madrina' }}</p>
+          </div>
         </li>
       </ul>
     </div>
