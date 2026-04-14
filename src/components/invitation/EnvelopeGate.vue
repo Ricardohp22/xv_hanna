@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import InvitationPastelBackdrop from './InvitationPastelBackdrop.vue'
 
 const emit = defineEmits<{
   /** Al hacer clic en “Abrir sobre”; el padre inicia aquí el audio (gesto de usuario). */
@@ -32,8 +31,7 @@ function onEnvelopeGateOutEnd(ev: AnimationEvent) {
     :class="{ 'pointer-events-none opacity-0 transition-none': done }"
     aria-live="polite"
   >
-    <!-- Fondo pastel: fuera del nodo con scale (fixed real al viewport; no hereda transform) -->
-    <InvitationPastelBackdrop />
+    <!-- Fondo: lo pinta InvitationView (una sola capa continua bajo sobre + SPA) -->
 
     <!-- Solo mariposas + carta: 100% → 95% → desvanecido -->
     <div

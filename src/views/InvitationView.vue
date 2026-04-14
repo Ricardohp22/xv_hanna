@@ -106,19 +106,21 @@ const quinceName = computed(() => bundle.value?.event?.name || 'Hanna')
       loop
       aria-hidden="true"
     />
+    <!-- Mismo fondo pastel + mariposas decorativas durante todo el flujo (sobre + invitación) -->
+    <InvitationPastelBackdrop />
+
     <EnvelopeGate v-if="showEnvelope" @opening="playInviteMusic" @opened="onEnvelopeOpened">
       <template #family>{{ bundle.family.family_name }}</template>
     </EnvelopeGate>
 
     <div
-      class="relative isolate min-h-svh bg-white px-3 pb-24 sm:px-4 md:px-5 motion-safe:transition-[opacity,transform] motion-safe:duration-[480ms] motion-safe:ease-out motion-reduce:transition-none"
+      class="relative z-[1] min-h-svh bg-transparent px-3 pb-24 sm:px-4 md:px-5 motion-safe:transition-[opacity,transform] motion-safe:duration-[480ms] motion-safe:ease-out motion-reduce:transition-none"
       :class="
         showEnvelope
           ? 'pointer-events-none translate-y-2 opacity-0 motion-reduce:translate-y-0'
           : 'translate-y-0 opacity-100'
       "
     >
-      <InvitationPastelBackdrop v-if="!showEnvelope" />
       <div class="relative z-[1]">
         <FloatingTicketBtn />
 
