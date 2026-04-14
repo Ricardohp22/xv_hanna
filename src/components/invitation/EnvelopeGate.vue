@@ -2,23 +2,18 @@
 import { ref } from 'vue'
 
 const emit = defineEmits<{
+  /** Al hacer clic en “Abrir sobre”; el padre inicia aquí el audio (gesto de usuario). */
+  opening: []
   opened: []
 }>()
 
 const opening = ref(false)
 const done = ref(false)
-const audioRef = ref<HTMLAudioElement | null>(null)
 
 function open() {
   if (opening.value || done.value) return
+  emit('opening')
   opening.value = true
-  const a = audioRef.value
-  if (a) {
-    a.volume = 0.45
-    a.play().catch(() => {
-      /* autoplay bloqueado sin gesto; ya hay gesto de clic */
-    })
-  }
   window.setTimeout(() => {
     done.value = true
     emit('opened')
@@ -32,8 +27,6 @@ function open() {
     :class="{ 'pointer-events-none opacity-0': done, 'transition-opacity duration-700': done }"
     aria-live="polite"
   >
-    <audio ref="audioRef" src="/audio/fondo.mp3" preload="auto" loop />
-
     <div class="relative mb-10 max-w-md">
       <div
         v-for="n in 14"

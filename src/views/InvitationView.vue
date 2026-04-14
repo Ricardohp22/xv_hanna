@@ -29,6 +29,16 @@ const bundle = ref<InvitationBundle | null>(null)
 const loadError = ref<string | null>(null)
 const loading = ref(false)
 const showEnvelope = ref(true)
+const inviteMusicRef = ref<HTMLAudioElement | null>(null)
+
+function playInviteMusic() {
+  const el = inviteMusicRef.value
+  if (!el) return
+  el.volume = 0.45
+  void el.play().catch(() => {
+    /* políticas de autoplay / permisos */
+  })
+}
 
 async function load() {
   loadError.value = null
@@ -88,7 +98,15 @@ const quinceName = computed(() => bundle.value?.event?.name || 'Hanna')
   </div>
 
   <template v-else>
-    <EnvelopeGate v-if="showEnvelope" @opened="onEnvelopeOpened">
+    <audio
+      ref="inviteMusicRef"
+      class="pointer-events-none fixed left-0 top-0 h-px w-px opacity-0"
+      src="/audio/fondo.mp3"
+      preload="auto"
+      loop
+      aria-hidden="true"
+    />
+    <EnvelopeGate v-if="showEnvelope" @opening="playInviteMusic" @opened="onEnvelopeOpened">
       <template #family>{{ bundle.family.family_name }}</template>
     </EnvelopeGate>
 
@@ -102,7 +120,7 @@ const quinceName = computed(() => bundle.value?.event?.name || 'Hanna')
         <SectionFormalInvite :family-name="bundle.family.family_name" :quince-name="quinceName" />
 
         <CarouselHero :slides="bundle.carousel?.slides || []" />
-        
+
         <SectionSponsors :sponsors="bundle.sponsors" />
 
         <SectionVenue :venues="bundle.venues" :event-date="bundle.event?.event_date || null" />
