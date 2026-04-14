@@ -18,7 +18,9 @@ function open() {
 }
 
 function onEnvelopeSceneAnimationEnd(ev: AnimationEvent) {
-  if (ev.animationName !== 'envelope-zoom-through') return
+  // Con <style scoped>, Vue renombra los @keyframes; animationName no coincide al 100%.
+  if (!ev.animationName.includes('envelope-zoom-through')) return
+  if (ev.target !== ev.currentTarget) return
   done.value = true
   emit('opened')
 }
@@ -28,7 +30,7 @@ function onEnvelopeSceneAnimationEnd(ev: AnimationEvent) {
   <!-- Capa fija: pantalla completa del sobre (por encima del resto de la SPA) -->
   <div
     class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-transparent px-4 text-center sm:px-6"
-    :class="{ 'pointer-events-none': done }"
+    :class="{ 'pointer-events-none opacity-0 transition-none': done }"
     aria-live="polite"
   >
     <!-- Fondo pastel a pantalla: sin escala (solo la carta hace zoom) -->
@@ -127,18 +129,22 @@ function onEnvelopeSceneAnimationEnd(ev: AnimationEvent) {
     /* Zoom que gana velocidad hacia el final (evita pausa perceptible antes del fade) */
     animation-timing-function: cubic-bezier(0.2, 0.85, 0.2, 1);
   }
-  78% {
+  72% {
     transform: scale(10.5) translateY(0);
     opacity: 1;
-    animation-timing-function: linear;
+    animation-timing-function: cubic-bezier(0.4, 0, 1, 1);
+  }
+  88% {
+    transform: scale(12) translateY(0);
+    opacity: 0;
   }
   100% {
-    transform: scale(11.75) translateY(0);
+    transform: scale(12) translateY(0);
     opacity: 0;
   }
 }
 .envelope-zoom-through {
-  animation: envelope-zoom-through 1.65s forwards;
+  animation: envelope-zoom-through 1.35s forwards;
   will-change: transform, opacity;
 }
 
