@@ -39,7 +39,7 @@ const countdownVenue = computed(() => {
 const countdownTitle = computed(() => {
   const v = countdownVenue.value
   if (!v) return 'Cuenta regresiva'
-  if (v.type === 'misa') return 'Cuenta regresiva para la misa'
+  if (v.type === 'misa') return '¡Ya solo faltan!'
   return 'Cuenta regresiva para la fiesta'
 })
 
@@ -142,7 +142,7 @@ function formatTime(t: string | null | undefined): string {
     class="relative min-h-[150svh] bg-gradient-to-b from-lilac-100 via-white to-lilac-50 px-3 py-16 sm:px-4 md:px-5 md:py-24"
   >
     <div class="mx-auto max-w-3xl">
-      <!-- Una sola tarjeta: título, fecha, cuenta regresiva, misa / iglesia -->
+      <!-- Tarjeta principal: título, fecha, calendario del mes, misa, fiesta -->
       <div
         class="rounded-3xl border border-lilac-200 bg-white/95 px-4 py-6 shadow-paper sm:px-6 sm:py-8 md:px-8 md:py-9"
       >
@@ -161,6 +161,95 @@ function formatTime(t: string | null | undefined): string {
 
         <div class="my-8 border-t border-lilac-200/70" aria-hidden="true" />
 
+        <template v-if="calendar">
+          <!-- <p class="text-center font-sans text-sm font-semibold uppercase tracking-wide text-lilac-600">
+            Calendario
+          </p> -->
+          <p class="text-center font-display text-3xl capitalize text-lilac-800">{{ calendar.label }}</p>
+          <div class="mt-4 grid grid-cols-7 gap-1 text-center text-xs font-semibold text-slate-500">
+            <span>Dom</span>
+            <span>Lun</span>
+            <span>Mar</span>
+            <span>Mié</span>
+            <span>Jue</span>
+            <span>Vie</span>
+            <span>Sáb</span>
+          </div>
+          <div class="mt-2 grid grid-cols-7 gap-1 text-center text-sm">
+            <span
+              v-for="(c, i) in calendar.cells"
+              :key="i"
+              class="rounded-lg py-2 font-sans"
+              :class="
+                c.day == null
+                  ? 'text-transparent'
+                  : c.isEvent
+                    ? 'bg-lilac-500 font-bold text-white shadow-md'
+                    : 'bg-lilac-50/80 text-slate-700'
+              "
+            >
+              {{ c.day != null ? c.day : '' }}
+            </span>
+          </div>
+        </template>
+
+        <template v-if="misa">
+          <div class="my-8 border-t border-lilac-200/70" aria-hidden="true" />
+
+          <div class="flex items-start gap-3 sm:gap-4">
+<!--             <span class="shrink-0 text-3xl sm:text-4xl" aria-hidden="true">⛪</span> -->            <div class="min-w-0 flex-1">
+              <h3 class="font-script text-2xl text-lilac-700 sm:text-3xl">Misa</h3>
+              <p class="mt-1 font-sans text-sm font-semibold uppercase tracking-wide text-lilac-600">Iglesia</p>
+              <p class="mt-1 font-sans text-base font-semibold text-slate-800">{{ misa.name }}</p>
+              <p class="mt-2 font-sans text-sm leading-relaxed text-slate-600">{{ misa.address }}</p>
+              <p class="mt-2 font-sans text-sm text-lilac-700">
+                Horario: {{ formatTime(misa.start_time) }}
+                <span v-if="misa.end_time"> — {{ formatTime(misa.end_time) }}</span>
+              </p>
+              <a
+                v-if="misa.address"
+                class="mt-4 inline-flex items-center rounded-full bg-lilac-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-lilac-500"
+                :href="googleMapsSearchUrl(`${misa.name || ''} ${misa.address}`)"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Ver en Google Maps
+              </a>
+            </div>
+          </div>
+        </template>
+
+        <template v-if="fiesta">
+          <div class="my-8 border-t border-lilac-200/70" aria-hidden="true" />
+
+          <div class="flex items-start gap-3 sm:gap-4">
+<!--             <span class="shrink-0 text-3xl sm:text-4xl" aria-hidden="true">🎉</span> -->
+            <div class="min-w-0 flex-1">
+              <h3 class="font-script text-2xl text-lilac-700 sm:text-3xl">Fiesta</h3>
+              <p class="mt-1 font-sans text-sm font-semibold uppercase tracking-wide text-lilac-600">Recepción</p>
+              <p class="mt-1 font-sans text-base font-semibold text-slate-800">{{ fiesta.name }}</p>
+              <p class="mt-2 font-sans text-sm leading-relaxed text-slate-600">{{ fiesta.address }}</p>
+              <p class="mt-2 font-sans text-sm text-lilac-700">
+                Horario: {{ formatTime(fiesta.start_time) }}
+                <span v-if="fiesta.end_time"> — {{ formatTime(fiesta.end_time) }}</span>
+              </p>
+              <a
+                v-if="fiesta.address"
+                class="mt-4 inline-flex items-center rounded-full bg-lilac-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-lilac-500"
+                :href="googleMapsSearchUrl(`${fiesta.name || ''} ${fiesta.address}`)"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Ver en Google Maps
+              </a>
+            </div>
+          </div>
+        </template>
+      </div>
+
+      <div
+        class="mt-10 rounded-3xl border border-lilac-200 bg-white/95 px-4 py-6 shadow-paper sm:px-5 sm:py-7 md:px-6"
+      >
         <p class="text-center font-script text-2xl text-lilac-600">{{ countdownTitle }}</p>
         <div
           v-if="countdown"
@@ -187,98 +276,9 @@ function formatTime(t: string | null | undefined): string {
           Configura la fecha del evento y el horario de misa o fiesta en la base de datos para ver la cuenta
           regresiva.
         </p>
-
-        <template v-if="misa">
-          <div class="my-8 border-t border-lilac-200/70" aria-hidden="true" />
-
-          <div class="flex items-start gap-3 sm:gap-4">
-            <span class="shrink-0 text-3xl sm:text-4xl" aria-hidden="true">⛪</span>
-            <div class="min-w-0 flex-1">
-              <h3 class="font-script text-2xl text-lilac-700 sm:text-3xl">Misa</h3>
-              <p class="mt-1 font-sans text-sm font-semibold uppercase tracking-wide text-lilac-600">Iglesia</p>
-              <p class="mt-1 font-sans text-base font-semibold text-slate-800">{{ misa.name }}</p>
-              <p class="mt-2 font-sans text-sm leading-relaxed text-slate-600">{{ misa.address }}</p>
-              <p class="mt-2 font-sans text-sm text-lilac-700">
-                Horario: {{ formatTime(misa.start_time) }}
-                <span v-if="misa.end_time"> — {{ formatTime(misa.end_time) }}</span>
-              </p>
-              <a
-                v-if="misa.address"
-                class="mt-4 inline-flex items-center rounded-full bg-lilac-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-lilac-500"
-                :href="googleMapsSearchUrl(`${misa.name || ''} ${misa.address}`)"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Ver en Google Maps
-              </a>
-            </div>
-          </div>
-        </template>
-
-        <template v-if="fiesta">
-          <div class="my-8 border-t border-lilac-200/70" aria-hidden="true" />
-
-          <div class="flex items-start gap-3 sm:gap-4">
-            <span class="shrink-0 text-3xl sm:text-4xl" aria-hidden="true">🎉</span>
-            <div class="min-w-0 flex-1">
-              <h3 class="font-script text-2xl text-lilac-700 sm:text-3xl">Fiesta</h3>
-              <p class="mt-1 font-sans text-sm font-semibold uppercase tracking-wide text-lilac-600">Recepción</p>
-              <p class="mt-1 font-sans text-base font-semibold text-slate-800">{{ fiesta.name }}</p>
-              <p class="mt-2 font-sans text-sm leading-relaxed text-slate-600">{{ fiesta.address }}</p>
-              <p class="mt-2 font-sans text-sm text-lilac-700">
-                Horario: {{ formatTime(fiesta.start_time) }}
-                <span v-if="fiesta.end_time"> — {{ formatTime(fiesta.end_time) }}</span>
-              </p>
-              <a
-                v-if="fiesta.address"
-                class="mt-4 inline-flex items-center rounded-full bg-lilac-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-lilac-500"
-                :href="googleMapsSearchUrl(`${fiesta.name || ''} ${fiesta.address}`)"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Ver en Google Maps
-              </a>
-            </div>
-          </div>
-        </template>
       </div>
 
-      <div
-        v-if="calendar"
-        class="mt-10 rounded-3xl border border-lilac-200 bg-white/95 px-4 py-6 shadow-paper sm:px-5 sm:py-7 md:px-6"
-      >
-        <p class="text-center font-sans text-sm font-semibold uppercase tracking-wide text-lilac-600">
-          Calendario
-        </p>
-        <p class="text-center font-display text-3xl capitalize text-lilac-800">{{ calendar.label }}</p>
-        <div class="mt-4 grid grid-cols-7 gap-1 text-center text-xs font-semibold text-slate-500">
-          <span>Dom</span>
-          <span>Lun</span>
-          <span>Mar</span>
-          <span>Mié</span>
-          <span>Jue</span>
-          <span>Vie</span>
-          <span>Sáb</span>
-        </div>
-        <div class="mt-2 grid grid-cols-7 gap-1 text-center text-sm">
-          <span
-            v-for="(c, i) in calendar.cells"
-            :key="i"
-            class="rounded-lg py-2 font-sans"
-            :class="
-              c.day == null
-                ? 'text-transparent'
-                : c.isEvent
-                  ? 'bg-lilac-500 font-bold text-white shadow-md'
-                  : 'bg-lilac-50/80 text-slate-700'
-            "
-          >
-            {{ c.day != null ? c.day : '' }}
-          </span>
-        </div>
-      </div>
-
-      <div class="mt-12 rounded-3xl border border-lilac-200 bg-white/95 px-4 py-6 shadow-paper sm:px-5 sm:py-7 md:px-6">
+      <!-- <div class="mt-12 rounded-3xl border border-lilac-200 bg-white/95 px-4 py-6 shadow-paper sm:px-5 sm:py-7 md:px-6">
         <h3 class="text-center font-display text-3xl text-lilac-700">Indicaciones adicionales</h3>
         <p class="mt-4 font-sans text-base leading-relaxed text-slate-700">
           {{
@@ -286,7 +286,7 @@ function formatTime(t: string | null | undefined): string {
             'Llega con unos minutos de anticipación para la misa. Después de la ceremonia te compartiremos el acceso al salón. Si vienes en auto, considera el tráfico y el estacionamiento cercano a cada ubicación.'
           }}
         </p>
-      </div>
+      </div> -->
     </div>
   </section>
 </template>
