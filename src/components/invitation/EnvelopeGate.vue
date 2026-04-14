@@ -118,12 +118,12 @@ function onEnvelopeGateOutEnd(ev: AnimationEvent) {
     transform: scale(1);
     opacity: 1;
   }
-  28% {
+  50% {
     transform: scale(0.95) translateY(0.35rem);
-    opacity: 1;
+    opacity: .5;
   }
   100% {
-    transform: scale(0.95) translateY(0.35rem);
+    transform: scale(0.90) translateY(0.35rem);
     opacity: 0;
   }
 }

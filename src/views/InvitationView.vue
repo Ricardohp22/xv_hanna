@@ -111,7 +111,12 @@ const quinceName = computed(() => bundle.value?.event?.name || 'Hanna')
     </EnvelopeGate>
 
     <div
-      class="relative isolate min-h-svh bg-white px-3 pb-24 sm:px-4 md:px-5"
+      class="relative isolate min-h-svh bg-white px-3 pb-24 sm:px-4 md:px-5 motion-safe:transition-[opacity,transform] motion-safe:duration-[480ms] motion-safe:ease-out motion-reduce:transition-none"
+      :class="
+        showEnvelope
+          ? 'pointer-events-none translate-y-2 opacity-0 motion-reduce:translate-y-0'
+          : 'translate-y-0 opacity-100'
+      "
     >
       <InvitationPastelBackdrop v-if="!showEnvelope" />
       <div class="relative z-[1]">
