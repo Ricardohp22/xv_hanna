@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import InvitationPastelBackdrop from './InvitationPastelBackdrop.vue'
 
 const emit = defineEmits<{
   /** Al hacer clic en “Abrir sobre”; el padre inicia aquí el audio (gesto de usuario). */
@@ -14,89 +15,133 @@ function open() {
   if (opening.value || done.value) return
   emit('opening')
   opening.value = true
-  window.setTimeout(() => {
-    done.value = true
-    emit('opened')
-  }, 2200)
+}
+
+function onEnvelopeSceneAnimationEnd(ev: AnimationEvent) {
+  if (ev.animationName !== 'envelope-zoom-through') return
+  done.value = true
+  emit('opened')
 }
 </script>
 
 <template>
+  <!-- Capa fija: pantalla completa del sobre (por encima del resto de la SPA) -->
   <div
-    class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gradient-to-b from-lilac-900 via-lilac-700 to-lilac-500 px-6 text-center"
-    :class="{ 'pointer-events-none opacity-0': done, 'transition-opacity duration-700': done }"
+    class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-transparent px-4 text-center sm:px-6"
+    :class="{ 'pointer-events-none': done }"
     aria-live="polite"
   >
-    <div class="relative mb-10 max-w-md">
-      <div
-        v-for="n in 14"
-        :key="n"
-        class="pointer-events-none absolute flex items-center justify-center"
-        :class="opening ? `bfly-${n}` : 'opacity-0'"
-        :style="{ animationDelay: `${n * 0.08}s` }"
-        aria-hidden="true"
-      >
-        <img
-          src="/mariposa_icon.png"
-          alt=""
-          class="h-auto object-contain drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)]"
-          :class="n % 2 === 0 ? 'scale-x-[-1]' : ''"
-          :style="{
-            width: `${26 + (n % 6) * 8}px`,
-            opacity: 0.5 + (n % 5) * 0.09,
-          }"
-          loading="eager"
-          decoding="async"
-        />
-      </div>
+    <!-- Fondo pastel a pantalla: sin escala (solo la carta hace zoom) -->
+    <div
+      class="relative flex min-h-svh w-full max-w-none flex-col items-center justify-center"
+    >
+      <InvitationPastelBackdrop />
 
-      <div
-        class="relative mx-auto w-[min(88vw,320px)] transition-transform duration-700"
-        :class="opening ? 'translate-y-4 scale-[0.97]' : ''"
-      >
+      <!-- Mariposas + carta: las mariposas no heredan la escala de apertura -->
+      <div class="relative z-10 mb-10 max-w-md w-full">
         <div
-          class="relative z-10 rounded-2xl border border-white/25 bg-white/10 p-8 shadow-2xl backdrop-blur-md"
+          v-for="n in 14"
+          :key="n"
+          class="pointer-events-none absolute flex items-center justify-center"
+          :class="opening ? `bfly-${n}` : 'opacity-0'"
+          :style="{ animationDelay: `${n * 0.08}s` }"
+          aria-hidden="true"
         >
-          <p class="font-script text-2xl text-white/90 sm:text-3xl">Apreciable familia</p>
-          <p class="mt-1 font-display text-4xl leading-tight text-blush sm:text-5xl">
-            <slot name="family" />
-          </p>
-          <p class="mt-6 font-sans text-base leading-relaxed text-white/90">
-            Hoy empieza la cuenta regresiva para el día más especial de mi vida y quiero que lo compartas
-            conmigo. Dentro de este sobre encontrarás todo lo que tienes que saber.
-          </p>
-          <button
-            type="button"
-            class="mt-8 inline-flex items-center justify-center gap-2.5 rounded-full bg-white px-8 py-3 font-sans text-sm font-semibold text-lilac-700 shadow-lg transition hover:bg-blush hover:text-lilac-900"
-            @click="open"
-          >
-            <img
-              src="/mariposa_icon.png"
-              alt=""
-              class="h-6 w-6 shrink-0 object-contain opacity-90 motion-safe:animate-float"
-              aria-hidden="true"
-              loading="eager"
-              decoding="async"
-            />
-            Abrir sobre
-          </button>
+          <img
+            src="/mariposa_icon.png"
+            alt=""
+            class="h-auto object-contain drop-shadow-[0_2px_8px_rgba(99,79,160,0.35)]"
+            :class="n % 2 === 0 ? 'scale-x-[-1]' : ''"
+            :style="{
+              width: `${26 + (n % 6) * 8}px`,
+              opacity: 0.5 + (n % 5) * 0.09,
+            }"
+            loading="eager"
+            decoding="async"
+          />
         </div>
 
+        <!-- Solo esta tarjeta (mensaje + botón): 95% → zoom rápido → desvanecido -->
         <div
-          class="envelope-back absolute -bottom-6 left-1/2 z-0 h-40 w-[110%] -translate-x-1/2 rounded-b-3xl bg-lilac-900/60 shadow-inner"
-          aria-hidden="true"
-        />
-        <div
-          class="absolute -top-3 left-1/2 z-20 h-24 w-[min(92vw,340px)] -translate-x-1/2 rounded-t-3xl bg-gradient-to-b from-lilac-100/95 to-lilac-300/70 shadow-lg transition-all duration-700 ease-out"
-          :class="opening ? '-translate-y-16 opacity-0' : ''"
-          aria-hidden="true"
-        />
+          class="relative mx-auto w-[min(88vw,320px)] origin-center"
+          :class="opening ? 'envelope-zoom-through' : ''"
+          @animationend="onEnvelopeSceneAnimationEnd"
+        >
+          <!-- Nota sobre: textura papel sobre (sobre.webp) + título, texto y botón -->
+          <div class="relative z-10 overflow-hidden rounded-2xl border border-lilac-200/90 shadow-paper">
+            <!-- Textura del sobre (imagen de fondo) -->
+            <div
+              class="pointer-events-none absolute inset-0 bg-[url('/sobre.webp')] bg-cover bg-center bg-no-repeat"
+              aria-hidden="true"
+            />
+            <!-- Velo muy suave para mantener legible el texto sobre la textura -->
+            <div
+              class="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/80 via-white/70 to-white/85"
+              aria-hidden="true"
+            />
+            <!-- Contenido: mensaje inicial + acción -->
+            <div class="relative z-[1] px-6 py-8 text-center sm:px-8 sm:py-9">
+              <p class="font-script text-2xl text-lilac-700 sm:text-3xl">Apreciable familia</p>
+              <p class="mt-1 font-display text-4xl leading-tight text-lilac-600 sm:text-5xl">
+                <slot name="family" />
+              </p>
+              <p class="mt-6 font-sans text-base leading-relaxed text-slate-800">
+                Hoy empieza la cuenta regresiva para uno de los días más especiales de mi vida y quiero que lo compartas
+                conmigo. Dentro de este sobre encontrarás todo lo que mi familia y yo queremos compartir con ustedes!.
+              </p>
+              <!-- Botón principal: dispara audio (evento opening) y animación de apertura -->
+              <button
+                type="button"
+                class="mt-8 inline-flex items-center justify-center gap-2.5 rounded-full bg-gradient-to-r from-lilac-600 to-lilac-500 px-8 py-3 font-sans text-sm font-semibold text-white shadow-lg transition hover:from-lilac-500 hover:to-lilac-400"
+                @click="open"
+              >
+                <img
+                  src="/mariposa_icon.png"
+                  alt=""
+                  class="h-6 w-6 shrink-0 object-contain opacity-90 motion-safe:animate-float"
+                  aria-hidden="true"
+                  loading="eager"
+                  decoding="async"
+                />
+                Abrir sobre
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
+/* Apertura: leve reducción → zoom que acelera al final (sin “plateau”) → desvanecido muy corto */
+@keyframes envelope-zoom-through {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+    animation-timing-function: ease-out;
+  }
+  9% {
+    transform: scale(0.95) translateY(0.45rem);
+    opacity: 1;
+    /* Zoom que gana velocidad hacia el final (evita pausa perceptible antes del fade) */
+    animation-timing-function: cubic-bezier(0.2, 0.85, 0.2, 1);
+  }
+  78% {
+    transform: scale(10.5) translateY(0);
+    opacity: 1;
+    animation-timing-function: linear;
+  }
+  100% {
+    transform: scale(11.75) translateY(0);
+    opacity: 0;
+  }
+}
+.envelope-zoom-through {
+  animation: envelope-zoom-through 1.65s forwards;
+  will-change: transform, opacity;
+}
+
 @keyframes bfly-out {
   0% {
     opacity: 0;
