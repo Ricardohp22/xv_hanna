@@ -125,12 +125,12 @@ const quinceName = computed(() => bundle.value?.event?.name || 'Hanna')
         <FloatingTicketBtn />
 
         <SectionFormalInvite :family-name="bundle.family.family_name" :quince-name="quinceName" />
-
-        <CarouselHero :slides="bundle.carousel?.slides || []" />
+        
+        <SectionVenue :venues="bundle.venues" :event-date="bundle.event?.event_date || null" />
 
         <SectionSponsors :sponsors="bundle.sponsors" />
 
-        <SectionVenue :venues="bundle.venues" :event-date="bundle.event?.event_date || null" />
+        <CarouselHero :slides="bundle.carousel?.slides || []" />
 
         <SectionSchedule :items="bundle.schedule" />
 

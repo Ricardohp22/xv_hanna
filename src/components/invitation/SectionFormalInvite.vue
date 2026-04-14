@@ -62,12 +62,68 @@ defineProps<{
           </div>
 
           <p
-            class="mt-2 shrink-0 font-elegant text-xl font-semibold italic text-lilac-700/60 sm:mt-3 sm:text-2xl md:text-3xl"
+            class="mt-2 shrink-0 font-elegant text-xl font-semibold italic text-lilac-700/80 sm:mt-3 sm:text-2xl md:text-3xl"
           >
             Contamos con tu presencia!
           </p>
+          <!-- Indicador de scroll: sugerencia visual hacia el resto de la invitación -->
+    <div
+      class="pointer-events-none flex shrink-0 flex-col items-center gap-1.5 pb-1 pt-3 sm:gap-2 sm:pb-2 sm:pt-4"
+    >
+      <span
+        class="font-elegant text-[0.65rem] font-semibold uppercase tracking-[0.38em] text-lilac-600/80 sm:text-[0.7rem]"
+      >
+        Continúa abajo
+      </span>
+      <div
+        class="formal-invite-scroll-cue flex flex-col items-center gap-0.5"
+        aria-hidden="true"
+      >
+        <span
+          class="block h-7 w-px rounded-full bg-gradient-to-b from-lilac-400/90 via-lilac-400/40 to-transparent sm:h-8"
+        />
+        <svg
+          class="h-4 w-4 text-lilac-500/90 sm:h-[1.15rem] sm:w-[1.15rem]"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M6 9l6 6 6-6" />
+        </svg>
+      </div>
+    </div>
         </div>
       </div>
     </div>
+
+    
   </section>
 </template>
+
+<style scoped>
+@keyframes formal-invite-scroll-nudge {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.55;
+  }
+  50% {
+    transform: translateY(6px);
+    opacity: 1;
+  }
+}
+
+.formal-invite-scroll-cue {
+  animation: formal-invite-scroll-nudge 2.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .formal-invite-scroll-cue {
+    animation: none;
+    opacity: 0.75;
+  }
+}
+</style>
