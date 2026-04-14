@@ -9,7 +9,7 @@ const props = defineProps<{
 
 /** Convención fija (sin columna en DB): `public/padrinos/<id>.jpg` */
 function sponsorPhotoSrc(id: number) {
-  return `/padrinos/${id}.jpg`
+  return `/padrinos/${id}.png`
 }
 
 const photoLoadFailed = ref<Set<number>>(new Set())
@@ -49,20 +49,20 @@ const rightColumn = computed(() => {
       <ul class="flex flex-col gap-8 md:pr-8">
         <li v-for="s in leftColumn" :key="s.id" class="flex flex-row items-center gap-3.5 text-left">
           <div
-            class="relative flex h-16 w-16 shrink-0 overflow-hidden rounded-2xl border border-lilac-200/85 bg-gradient-to-br from-white to-lilac-50 shadow-[0_2px_8px_rgba(99,79,160,0.12)] ring-1 ring-lilac-100/60 sm:h-[4.5rem] sm:w-[4.5rem]"
+            class="relative flex h-[2.8rem] w-[2.8rem] shrink-0 overflow-hidden rounded-2xl border border-lilac-200/45 bg-gradient-to-br from-white to-lilac-50/70 shadow-[0_1px_4px_rgba(99,79,160,0.06)] ring-1 ring-lilac-200/20 sm:h-[3.15rem] sm:w-[3.15rem]"
           >
             <img
               v-if="!photoLoadFailed.has(s.id)"
               :src="sponsorPhotoSrc(s.id)"
               alt=""
-              class="h-full w-full object-cover"
+              class="h-full w-full object-cover opacity-[0.88] saturate-[0.82] contrast-[0.96]"
               loading="lazy"
               decoding="async"
               @error="onSponsorPhotoError(s.id)"
             />
             <span
               v-else
-              class="flex h-full w-full items-center justify-center px-1 text-center font-sans text-[9px] font-medium leading-tight text-lilac-400"
+              class="flex h-full w-full items-center justify-center px-1 text-center font-sans text-[8px] font-medium leading-tight text-lilac-400/90"
             >
               Imagen alusiva
             </span>
@@ -77,20 +77,20 @@ const rightColumn = computed(() => {
       <ul class="flex flex-col gap-8 md:border-l md:border-lilac-200/50 md:pl-8">
         <li v-for="s in rightColumn" :key="s.id" class="flex flex-row items-center gap-3.5 text-left">
           <div
-            class="relative flex h-16 w-16 shrink-0 overflow-hidden rounded-2xl border border-lilac-200/85 bg-gradient-to-br from-white to-lilac-50 shadow-[0_2px_8px_rgba(99,79,160,0.12)] ring-1 ring-lilac-100/60 sm:h-[4.5rem] sm:w-[4.5rem]"
+            class="relative flex h-[2.8rem] w-[2.8rem] shrink-0 overflow-hidden rounded-2xl border border-lilac-200/45 bg-gradient-to-br from-white to-lilac-50/70 shadow-[0_1px_4px_rgba(99,79,160,0.06)] ring-1 ring-lilac-200/20 sm:h-[3.15rem] sm:w-[3.15rem]"
           >
             <img
               v-if="!photoLoadFailed.has(s.id)"
               :src="sponsorPhotoSrc(s.id)"
               alt=""
-              class="h-full w-full object-cover"
+              class="h-full w-full object-cover opacity-[0.88] saturate-[0.82] contrast-[0.96]"
               loading="lazy"
               decoding="async"
               @error="onSponsorPhotoError(s.id)"
             />
             <span
               v-else
-              class="flex h-full w-full items-center justify-center px-1 text-center font-sans text-[9px] font-medium leading-tight text-lilac-400"
+              class="flex h-full w-full items-center justify-center px-1 text-center font-sans text-[8px] font-medium leading-tight text-lilac-400/90"
             >
               Imagen alusiva
             </span>

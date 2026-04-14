@@ -34,9 +34,9 @@ defineProps<{
             class="mx-auto mt-3 max-w-xl shrink-0 font-elegant text-base font-semibold italic leading-snug text-slate-700 sm:mt-4 sm:text-base md:max-w-2xl"
           >
             Querida Familia
-            <span class="font-semibold text-lilac-700">{{ familyName }}</span
+            <span class="text-lg font-semibold text-lilac-700">{{ familyName }}</span
             >:<br />
-            Estan cordialmente invitados para ser parte de esta celebracion.
+            Estan cordialmente invitados para ser parte de esta celebración.
           </p>
 
           <div class="relative mx-auto mt-4 w-full max-w-md shrink-0 px-1 sm:mt-5 sm:max-w-lg">
