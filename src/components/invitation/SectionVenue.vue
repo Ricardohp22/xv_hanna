@@ -24,6 +24,25 @@ onUnmounted(() => {
 const misa = computed(() => props.venues.find((v) => v.type === 'misa'))
 const fiesta = computed(() => props.venues.find((v) => v.type === 'fiesta'))
 
+/**
+ * Cuenta regresiva: `event.event_date` (prop `eventDate`) + `venue.start_time` en hora local.
+ * Prioridad: misa con hora; si no, fiesta con hora.
+ */
+const countdownVenue = computed(() => {
+  const m = misa.value
+  const f = fiesta.value
+  if (m?.start_time) return m
+  if (f?.start_time) return f
+  return null
+})
+
+const countdownTitle = computed(() => {
+  const v = countdownVenue.value
+  if (!v) return 'Cuenta regresiva'
+  if (v.type === 'misa') return 'Cuenta regresiva para la misa'
+  return 'Cuenta regresiva para la fiesta'
+})
+
 function parseLocalDate(dateStr: string | null | undefined): Date | null {
   if (!dateStr) return null
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateStr)
@@ -34,20 +53,29 @@ function parseLocalDate(dateStr: string | null | undefined): Date | null {
   return new Date(y, mo - 1, d, 0, 0, 0, 0)
 }
 
-function misaDateTime(): Date | null {
+/** Interpreta `TIME` / string devuelto por Postgres (ej. "18:00:00" o "18:00"). */
+function parseStartTimeParts(t: string | null | undefined): { hh: number; mm: number; ss: number } | null {
+  if (t == null || typeof t !== 'string') return null
+  const m = /^(\d{1,2}):(\d{2})(?::(\d{2}))?/.exec(t.trim())
+  if (!m) return null
+  const hh = Number(m[1])
+  const mm = Number(m[2])
+  const ss = Number(m[3] ?? 0)
+  if (!Number.isFinite(hh) || !Number.isFinite(mm)) return null
+  return { hh, mm, ss: Number.isFinite(ss) ? ss : 0 }
+}
+
+/** Instante local = `event.event_date` + `venue.start_time` del venue elegido. */
+function countdownTargetDateTime(): Date | null {
   const d0 = parseLocalDate(props.eventDate)
-  const m = misa.value
-  if (!d0 || !m?.start_time) return null
-  const t = m.start_time
-  const parts = t.split(':')
-  const hh = Number(parts[0] ?? 0)
-  const mm = Number(parts[1] ?? 0)
-  const ss = Number(parts[2] ?? 0)
-  return new Date(d0.getFullYear(), d0.getMonth(), d0.getDate(), hh, mm, ss || 0, 0)
+  const venue = countdownVenue.value
+  const parts = parseStartTimeParts(venue?.start_time ?? null)
+  if (!d0 || !parts) return null
+  return new Date(d0.getFullYear(), d0.getMonth(), d0.getDate(), parts.hh, parts.mm, parts.ss, 0)
 }
 
 const countdown = computed(() => {
-  const target = misaDateTime()
+  const target = countdownTargetDateTime()
   if (!target) return null
   let ms = target.getTime() - now.value
   if (ms < 0) ms = 0
@@ -96,23 +124,26 @@ function formatTime(t: string | null | undefined): string {
     class="relative min-h-[150svh] bg-gradient-to-b from-lilac-100 via-white to-lilac-50 px-3 py-16 sm:px-4 md:px-5 md:py-24"
   >
     <div class="mx-auto max-w-3xl">
-      <h2 class="text-center font-display text-4xl text-lilac-700 sm:text-5xl">¿Cuándo y dónde?</h2>
-      <p v-if="eventDate" class="mt-4 text-center font-sans text-lg text-slate-700">
-        Día del evento:
-        <span class="font-semibold text-lilac-700">{{
-          parseLocalDate(eventDate)?.toLocaleDateString('es-MX', {
-            weekday: 'long',
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric',
-          })
-        }}</span>
-      </p>
-
+      <!-- Una sola tarjeta: título, fecha, cuenta regresiva, misa / iglesia -->
       <div
-        class="mt-10 rounded-3xl border border-lilac-200 bg-white/95 px-4 py-6 shadow-paper sm:px-5 sm:py-7 md:px-6"
+        class="rounded-3xl border border-lilac-200 bg-white/95 px-4 py-6 shadow-paper sm:px-6 sm:py-8 md:px-8 md:py-9"
       >
-        <p class="text-center font-script text-2xl text-lilac-600">Cuenta regresiva para la misa</p>
+        <h2 class="text-center font-display text-4xl text-lilac-700 sm:text-5xl">¿Cuándo y dónde?</h2>
+        <p v-if="eventDate" class="mt-4 text-center font-sans text-lg text-slate-700">
+          Día del evento:
+          <span class="font-semibold text-lilac-700">{{
+            parseLocalDate(eventDate)?.toLocaleDateString('es-MX', {
+              weekday: 'long',
+              day: 'numeric',
+              month: 'long',
+              year: 'numeric',
+            })
+          }}</span>
+        </p>
+
+        <div class="my-8 border-t border-lilac-200/70" aria-hidden="true" />
+
+        <p class="text-center font-script text-2xl text-lilac-600">{{ countdownTitle }}</p>
         <div
           v-if="countdown"
           class="mt-4 grid grid-cols-2 gap-3 font-sans text-center sm:grid-cols-4"
@@ -135,9 +166,63 @@ function formatTime(t: string | null | undefined): string {
           </div>
         </div>
         <p v-else class="mt-4 text-center font-sans text-sm text-slate-500">
-          Configura la fecha del evento y el horario de misa en la base de datos para ver la cuenta
+          Configura la fecha del evento y el horario de misa o fiesta en la base de datos para ver la cuenta
           regresiva.
         </p>
+
+        <template v-if="misa">
+          <div class="my-8 border-t border-lilac-200/70" aria-hidden="true" />
+
+          <div class="flex items-start gap-3 sm:gap-4">
+            <span class="shrink-0 text-3xl sm:text-4xl" aria-hidden="true">⛪</span>
+            <div class="min-w-0 flex-1">
+              <h3 class="font-script text-2xl text-lilac-700 sm:text-3xl">Misa</h3>
+              <p class="mt-1 font-sans text-sm font-semibold uppercase tracking-wide text-lilac-600">Iglesia</p>
+              <p class="mt-1 font-sans text-base font-semibold text-slate-800">{{ misa.name }}</p>
+              <p class="mt-2 font-sans text-sm leading-relaxed text-slate-600">{{ misa.address }}</p>
+              <p class="mt-2 font-sans text-sm text-lilac-700">
+                Horario: {{ formatTime(misa.start_time) }}
+                <span v-if="misa.end_time"> — {{ formatTime(misa.end_time) }}</span>
+              </p>
+              <a
+                v-if="misa.address"
+                class="mt-4 inline-flex items-center rounded-full bg-lilac-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-lilac-500"
+                :href="googleMapsSearchUrl(`${misa.name || ''} ${misa.address}`)"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Ver en Google Maps
+              </a>
+            </div>
+          </div>
+        </template>
+
+        <template v-if="fiesta">
+          <div class="my-8 border-t border-lilac-200/70" aria-hidden="true" />
+
+          <div class="flex items-start gap-3 sm:gap-4">
+            <span class="shrink-0 text-3xl sm:text-4xl" aria-hidden="true">🎉</span>
+            <div class="min-w-0 flex-1">
+              <h3 class="font-script text-2xl text-lilac-700 sm:text-3xl">Fiesta</h3>
+              <p class="mt-1 font-sans text-sm font-semibold uppercase tracking-wide text-lilac-600">Recepción</p>
+              <p class="mt-1 font-sans text-base font-semibold text-slate-800">{{ fiesta.name }}</p>
+              <p class="mt-2 font-sans text-sm leading-relaxed text-slate-600">{{ fiesta.address }}</p>
+              <p class="mt-2 font-sans text-sm text-lilac-700">
+                Horario: {{ formatTime(fiesta.start_time) }}
+                <span v-if="fiesta.end_time"> — {{ formatTime(fiesta.end_time) }}</span>
+              </p>
+              <a
+                v-if="fiesta.address"
+                class="mt-4 inline-flex items-center rounded-full bg-lilac-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-lilac-500"
+                :href="googleMapsSearchUrl(`${fiesta.name || ''} ${fiesta.address}`)"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Ver en Google Maps
+              </a>
+            </div>
+          </div>
+        </template>
       </div>
 
       <div
@@ -173,62 +258,6 @@ function formatTime(t: string | null | undefined): string {
             {{ c.day != null ? c.day : '' }}
           </span>
         </div>
-      </div>
-
-      <div class="mt-12 grid gap-8 md:grid-cols-2">
-        <article
-          v-if="misa"
-          class="rounded-3xl border border-lilac-200 bg-white/95 px-4 py-6 shadow-paper sm:px-5 sm:py-6 md:px-5"
-        >
-          <div class="flex items-start gap-3">
-            <span class="text-3xl" aria-hidden="true">⛪</span>
-            <div>
-              <h3 class="font-script text-2xl text-lilac-700">Misa</h3>
-              <p class="mt-1 font-sans text-base font-semibold text-slate-800">{{ misa.name }}</p>
-              <p class="mt-2 font-sans text-sm leading-relaxed text-slate-600">{{ misa.address }}</p>
-              <p class="mt-2 font-sans text-sm text-lilac-700">
-                Horario: {{ formatTime(misa.start_time) }}
-                <span v-if="misa.end_time"> — {{ formatTime(misa.end_time) }}</span>
-              </p>
-              <a
-                v-if="misa.address"
-                class="mt-4 inline-flex items-center rounded-full bg-lilac-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-lilac-500"
-                :href="googleMapsSearchUrl(`${misa.name || ''} ${misa.address}`)"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Ver en Google Maps
-              </a>
-            </div>
-          </div>
-        </article>
-
-        <article
-          v-if="fiesta"
-          class="rounded-3xl border border-lilac-200 bg-white/95 px-4 py-6 shadow-paper sm:px-5 sm:py-6 md:px-5"
-        >
-          <div class="flex items-start gap-3">
-            <span class="text-3xl" aria-hidden="true">🎉</span>
-            <div>
-              <h3 class="font-script text-2xl text-lilac-700">Fiesta</h3>
-              <p class="mt-1 font-sans text-base font-semibold text-slate-800">{{ fiesta.name }}</p>
-              <p class="mt-2 font-sans text-sm leading-relaxed text-slate-600">{{ fiesta.address }}</p>
-              <p class="mt-2 font-sans text-sm text-lilac-700">
-                Horario: {{ formatTime(fiesta.start_time) }}
-                <span v-if="fiesta.end_time"> — {{ formatTime(fiesta.end_time) }}</span>
-              </p>
-              <a
-                v-if="fiesta.address"
-                class="mt-4 inline-flex items-center rounded-full bg-lilac-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-lilac-500"
-                :href="googleMapsSearchUrl(`${fiesta.name || ''} ${fiesta.address}`)"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Ver en Google Maps
-              </a>
-            </div>
-          </div>
-        </article>
       </div>
 
       <div class="mt-12 rounded-3xl border border-lilac-200 bg-white/95 px-4 py-6 shadow-paper sm:px-5 sm:py-7 md:px-6">

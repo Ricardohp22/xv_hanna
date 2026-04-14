@@ -39,7 +39,7 @@ const rightColumn = computed(() => {
   <SectionPaper id="padrinos" wide>
     <h2 class="text-center font-display text-4xl text-lilac-700 sm:text-5xl">Mis padrinos</h2>
     <p class="mt-3 text-center font-sans text-sm text-slate-600">
-      Gracias por caminar a mi lado en este sueño.
+      Gracias por caminar a mi lado en este sueño y apoyarme incondicionalmente.
     </p>
 
     <div
