@@ -139,7 +139,7 @@ function formatTime(t: string | null | undefined): string {
 <template>
   <section
     id="fecha-lugar"
-    class="relative min-h-[150svh] bg-gradient-to-b from-white/70 via-transparent to-white/50 px-3 py-16 sm:px-4 md:px-5 md:py-24"
+    class="relative min-h-[150svh] bg-gradient-to-b from-white/70 via-transparent to-white/50 px-3 py-4 sm:px-4 md:px-5 md:py-24"
   >
     <div class="mx-auto max-w-3xl">
       <!-- Tarjeta principal: título, fecha, calendario del mes, misa, fiesta -->
@@ -248,28 +248,28 @@ function formatTime(t: string | null | undefined): string {
       </div>
 
       <div
-        class="mt-10 rounded-3xl border border-lilac-200 bg-white/95 px-4 py-6 shadow-paper sm:px-5 sm:py-7 md:px-6"
+        class="mt-10 rounded-3xl border border-lilac-200/70 bg-white/75 px-3 py-4 shadow-paper backdrop-blur-[2px] sm:px-5 sm:py-6 md:px-6"
       >
-        <p class="text-center font-script text-2xl text-lilac-600">{{ countdownTitle }}</p>
+        <p class="text-center font-script text-xl text-lilac-600/90 sm:text-2xl">{{ countdownTitle }}</p>
         <div
           v-if="countdown"
-          class="mt-4 grid grid-cols-2 gap-3 font-sans text-center sm:grid-cols-4"
+          class="mt-4 flex items-stretch gap-1.5 font-sans text-center sm:mt-5 sm:gap-2.5"
         >
-          <div class="rounded-2xl border border-lilac-200/60 bg-white/75 px-3 py-4 shadow-sm backdrop-blur-sm">
-            <p class="text-3xl font-bold text-lilac-700">{{ countdown.days }}</p>
-            <p class="text-xs uppercase tracking-wide text-slate-500">días</p>
+          <div class="flex min-w-0 flex-1 flex-col justify-center rounded-xl border border-lilac-200/60 bg-white/45 px-2 py-2 shadow-sm backdrop-blur-sm sm:rounded-2xl sm:bg-white/65 sm:px-3 sm:py-3">
+            <p class="text-xl font-bold leading-none text-lilac-700 sm:text-3xl">{{ countdown.days }}</p>
+            <p class="mt-1 text-[0.62rem] uppercase tracking-[0.18em] text-slate-500 sm:text-xs sm:tracking-wide">días</p>
           </div>
-          <div class="rounded-2xl border border-lilac-200/60 bg-white/75 px-3 py-4 shadow-sm backdrop-blur-sm">
-            <p class="text-3xl font-bold text-lilac-700">{{ countdown.hours }}</p>
-            <p class="text-xs uppercase tracking-wide text-slate-500">horas</p>
+          <div class="flex min-w-0 flex-1 flex-col justify-center rounded-xl border border-lilac-200/60 bg-white/45 px-2 py-2 shadow-sm backdrop-blur-sm sm:rounded-2xl sm:bg-white/65 sm:px-3 sm:py-3">
+            <p class="text-xl font-bold leading-none text-lilac-700 sm:text-3xl">{{ countdown.hours }}</p>
+            <p class="mt-1 text-[0.62rem] uppercase tracking-[0.18em] text-slate-500 sm:text-xs sm:tracking-wide">horas</p>
           </div>
-          <div class="rounded-2xl border border-lilac-200/60 bg-white/75 px-3 py-4 shadow-sm backdrop-blur-sm">
-            <p class="text-3xl font-bold text-lilac-700">{{ countdown.minutes }}</p>
-            <p class="text-xs uppercase tracking-wide text-slate-500">min</p>
+          <div class="flex min-w-0 flex-1 flex-col justify-center rounded-xl border border-lilac-200/60 bg-white/45 px-2 py-2 shadow-sm backdrop-blur-sm sm:rounded-2xl sm:bg-white/65 sm:px-3 sm:py-3">
+            <p class="text-xl font-bold leading-none text-lilac-700 sm:text-3xl">{{ countdown.minutes }}</p>
+            <p class="mt-1 text-[0.62rem] uppercase tracking-[0.18em] text-slate-500 sm:text-xs sm:tracking-wide">min</p>
           </div>
-          <div class="rounded-2xl border border-lilac-200/60 bg-white/75 px-3 py-4 shadow-sm backdrop-blur-sm">
-            <p class="text-3xl font-bold text-lilac-700">{{ countdown.seconds }}</p>
-            <p class="text-xs uppercase tracking-wide text-slate-500">seg</p>
+          <div class="flex min-w-0 flex-1 flex-col justify-center rounded-xl border border-lilac-200/60 bg-white/45 px-2 py-2 shadow-sm backdrop-blur-sm sm:rounded-2xl sm:bg-white/65 sm:px-3 sm:py-3">
+            <p class="text-xl font-bold leading-none text-lilac-700 sm:text-3xl">{{ countdown.seconds }}</p>
+            <p class="mt-1 text-[0.62rem] uppercase tracking-[0.18em] text-slate-500 sm:text-xs sm:tracking-wide">seg</p>
           </div>
         </div>
         <p v-else class="mt-4 text-center font-sans text-sm text-slate-500">
