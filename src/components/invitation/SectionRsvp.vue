@@ -38,6 +38,25 @@ const options: { value: RsvpStatus; label: string }[] = [
   { value: 'rechazado', label: 'No asistirá' },
 ]
 
+const rsvpBtnBase =
+  'rounded-full px-3 py-1.5 font-sans text-xs font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 sm:text-sm'
+
+const rsvpInactiveClass =
+  'bg-slate-100/95 text-slate-500 ring-1 ring-slate-200/90 hover:bg-slate-200/70 hover:text-slate-600 focus-visible:ring-slate-400'
+
+/** Solo el activo lleva color pastel (sí / tal vez / no); el resto va en gris. */
+function rsvpOptionButtonClass(isSelected: boolean, option: RsvpStatus): string {
+  const selected: Record<RsvpStatus, string> = {
+    confirmado:
+      'bg-emerald-200/95 text-emerald-950 shadow-md ring-2 ring-emerald-400/50 focus-visible:ring-emerald-400',
+    pendiente:
+      'bg-amber-200/95 text-amber-950 shadow-md ring-2 ring-amber-400/45 focus-visible:ring-amber-400',
+    rechazado:
+      'bg-rose-200/95 text-rose-950 shadow-md ring-2 ring-rose-400/50 focus-visible:ring-rose-400',
+  }
+  return `${rsvpBtnBase} ${isSelected ? selected[option] : rsvpInactiveClass}`
+}
+
 async function saveAll() {
   error.value = null
   saving.value = true
@@ -140,12 +159,7 @@ async function addExtraGuest() {
                 v-for="opt in options"
                 :key="opt.value + g.id"
                 type="button"
-                class="rounded-full px-3 py-1.5 font-sans text-xs font-semibold transition sm:text-sm"
-                :class="
-                  statusByGuest[g.id] === opt.value
-                    ? 'bg-lilac-600 text-white shadow'
-                    : 'bg-white text-lilac-700 ring-1 ring-lilac-200 hover:bg-lilac-100'
-                "
+                :class="rsvpOptionButtonClass(statusByGuest[g.id] === opt.value, opt.value)"
                 @click="statusByGuest[g.id] = opt.value"
               >
                 {{ opt.label }}
