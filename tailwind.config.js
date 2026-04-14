@@ -23,6 +23,8 @@ export default {
         display: ['"Great Vibes"', 'cursive'],
         script: ['"Parisienne"', 'cursive'],
         sans: ['"DM Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        /** Serif clásica: títulos elegantes y muy legibles */
+        elegant: ['"Cormorant Garamond"', 'Georgia', 'serif'],
       },
       boxShadow: {
         paper: '0 18px 50px rgba(55, 48, 120, 0.18)',
