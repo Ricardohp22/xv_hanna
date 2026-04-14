@@ -33,9 +33,9 @@ watch(
 )
 
 const options: { value: RsvpStatus; label: string }[] = [
-  { value: 'confirmado', label: 'Sí asistiré' },
-  { value: 'pendiente', label: 'Tal vez asistiré' },
-  { value: 'rechazado', label: 'No asistiré' },
+  { value: 'confirmado', label: 'Asistirá' },
+  { value: 'pendiente', label: 'Tal vez' },
+  { value: 'rechazado', label: 'No asistirá' },
 ]
 
 async function saveAll() {
@@ -101,13 +101,13 @@ async function addExtraGuest() {
     <div
       class="w-full max-w-2xl rounded-3xl border border-lilac-200/80 bg-white/95 px-5 py-8 shadow-paper backdrop-blur-sm sm:px-7 sm:py-10 md:px-9 md:py-12"
     >
-      <h2 class="text-center font-display text-3xl text-lilac-700 sm:text-4xl">
+      <h2 class="text-center font-display text-3xl text-green-700 sm:text-4xl">
         Confirma tu asistencia
       </h2>
       <p class="mt-4 font-sans text-sm leading-relaxed text-slate-700 sm:text-base">
         Es muy importante que confirmes tu asistencia para reservar tu lugar en la mesa. Puedes cambiar tu
-        respuesta cuando quieras; al final solo presiona
-        <span class="font-semibold text-lilac-700">Confirmar asistencia</span> para guardar los cambios.
+        respuesta las veces que quieras pero procura hacerlo con antelación; al final solo presiona
+        <span class="font-semibold text-green-700">Confirmar</span> para guardar los cambios.
       </p>
       <p class="mt-3 font-sans text-sm leading-relaxed text-slate-600">
         Si tienes dudas sobre horarios o acompañantes, comunícate con la familia anfitriona con la mayor
@@ -188,11 +188,11 @@ async function addExtraGuest() {
       <div class="mt-8 flex justify-center">
         <button
           type="button"
-          class="rounded-full bg-gradient-to-r from-lilac-600 to-lilac-500 px-10 py-3 font-sans text-sm font-semibold text-white shadow-lg transition hover:from-lilac-500 hover:to-lilac-400 disabled:opacity-50"
+          class="rounded-full bg-gradient-to-r from-green-600 to-green-500 px-10 py-3 font-sans text-sm font-semibold text-white shadow-lg transition hover:from-green-500 hover:to-green-400 disabled:opacity-50"
           :disabled="saving"
           @click="saveAll"
         >
-          {{ saving ? 'Guardando…' : 'Confirmar asistencia' }}
+          {{ saving ? 'Guardando…' : 'Confirmar' }}
         </button>
       </div>
     </div>
