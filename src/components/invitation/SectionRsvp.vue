@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, ref, watch } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import type { GuestRow, RsvpStatus } from '../../types/invitation'
 import { fetchJson } from '../../lib/api'
 
@@ -37,6 +37,12 @@ const options: { value: RsvpStatus; label: string }[] = [
   { value: 'pendiente', label: 'Tal vez' },
   { value: 'rechazado', label: 'No asistirá' },
 ]
+
+/** Boletos totales asignados a la familia: invitados con nombre (no extra) + cupos extra permitidos. */
+const totalTicketsAllocated = computed(() => {
+  const base = props.guests.filter((g) => !g.is_additional).length
+  return base + props.extraTicketQuantity
+})
 
 const rsvpBtnBase =
   'rounded-full px-3 py-1.5 font-sans text-xs font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 sm:text-sm'
@@ -120,17 +126,26 @@ async function addExtraGuest() {
     <div
       class="w-full max-w-2xl rounded-3xl border border-lilac-200/80 bg-white/95 px-5 py-8 shadow-paper backdrop-blur-sm sm:px-7 sm:py-10 md:px-9 md:py-12"
     >
-      <h2 class="text-center font-display text-3xl text-green-700 sm:text-4xl">
+      <h2 class="text-center font-display text-3xl text-lilac-700 sm:text-4xl">
         Confirma tu asistencia
       </h2>
+      <p
+        v-if="totalTicketsAllocated > 0"
+        class="mt-3 font-sans text-base text-slate-600 sm:text-base"
+      >
+        Tu invitación incluye
+        <span class="font-semibold text-indigo-800">{{ totalTicketsAllocated }}</span>
+        {{ totalTicketsAllocated === 1 ? 'boleto' : 'boletos' }} en total<template v-if="extraTicketQuantity > 0">
+          <span class="text-slate-500">
+            (invitados nombrados + {{ extraTicketQuantity }}
+            {{ extraTicketQuantity === 1 ? 'lugar extra' : 'lugares extra' }})
+          </span>
+        </template>.
+      </p>
       <p class="mt-4 font-sans text-sm leading-relaxed text-slate-700 sm:text-base">
         Es muy importante que confirmes tu asistencia para reservar tu lugar en la mesa. Puedes cambiar tu
         respuesta las veces que quieras pero procura hacerlo con antelación; al final solo presiona
-        <span class="font-semibold text-green-700">Confirmar</span> para guardar los cambios.
-      </p>
-      <p class="mt-3 font-sans text-sm leading-relaxed text-slate-600">
-        Si tienes dudas sobre horarios o acompañantes, comunícate con la familia anfitriona con la mayor
-        antelación posible: nos ayudará a organizar todo con calma y cariño.
+        <span class="text-green-800">Confirmar</span> para guardar los cambios.
       </p>
 
       <ul class="mt-10 space-y-6">

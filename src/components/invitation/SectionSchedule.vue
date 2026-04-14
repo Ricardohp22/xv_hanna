@@ -27,17 +27,18 @@ function fmtTimeOnly(dt: string | null | undefined): string {
 </script>
 
 <template>
-  <section id="cronograma" class="relative px-3 py-4 sm:px-4 sm:py-16 md:px-5 md:py-24">
+  <section id="cronograma" class="relative px-3 pb-4 pt-8 sm:px-4 sm:py-16 md:px-5 md:py-24">
     <div class="mx-auto max-w-2xl text-center">
       <p
-        class="mx-auto mb-2 inline-block rounded-full border border-lilac-200/80 bg-white/60 px-4 py-1 font-sans text-xs font-semibold uppercase tracking-[0.2em] text-lilac-600 backdrop-blur-sm"
+        class="mx-auto mt-2 inline-block rounded-full border border-lilac-200/80 bg-white/60 px-4 py-1 font-sans text-xs font-semibold uppercase tracking-[0.2em] text-lilac-600 backdrop-blur-sm"
       >
         Itinerario
       </p>
-      <h2 class="font-display text-4xl text-lilac-800 sm:text-5xl">Cronograma</h2>
+      <!-- <h2 class="font-display text-4xl text-lilac-800 sm:text-5xl">Cronograma</h2> -->
       <p class="mt-3 font-sans text-sm text-slate-600">
-        Una línea del tiempo con los momentos más especiales — solo horas, en orden.
+        Una línea del tiempo con los momentos más especiales a lo largo del evento.
       </p>
+      
     </div>
 
     <div v-if="sortedItems.length" class="relative mx-auto mt-16 max-w-3xl">
