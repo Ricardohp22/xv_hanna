@@ -112,7 +112,7 @@ async function submitText() {
       </button>
     </div>
 
-    <div v-else class="mt-6 rounded-2xl border border-lilac-200 bg-lilac-50/80 p-5 text-left">
+    <div v-else class="mt-6 rounded-2xl border border-lilac-200/85 bg-white/75 p-5 text-left shadow-sm backdrop-blur-sm">
       <p class="font-sans text-sm leading-relaxed text-slate-700">
         Por ahora el servidor
         <span class="font-semibold">no almacena audio ni video</span>

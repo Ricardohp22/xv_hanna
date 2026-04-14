@@ -139,7 +139,7 @@ function formatTime(t: string | null | undefined): string {
 <template>
   <section
     id="fecha-lugar"
-    class="relative min-h-[150svh] bg-gradient-to-b from-lilac-100 via-white to-lilac-50 px-3 py-16 sm:px-4 md:px-5 md:py-24"
+    class="relative min-h-[150svh] bg-gradient-to-b from-white/70 via-transparent to-white/50 px-3 py-16 sm:px-4 md:px-5 md:py-24"
   >
     <div class="mx-auto max-w-3xl">
       <!-- Tarjeta principal: título, fecha, calendario del mes, misa, fiesta -->
@@ -148,7 +148,7 @@ function formatTime(t: string | null | undefined): string {
       >
         <h2 class="text-center font-display text-4xl text-lilac-700 sm:text-5xl">¿Cuándo y dónde?</h2>
         <p v-if="eventDate" class="mt-4 text-center font-sans text-lg text-slate-700">
-          Día del evento:
+          
           <span class="font-semibold text-lilac-700">{{
             parseLocalDate(eventDate)?.toLocaleDateString('es-MX', {
               weekday: 'long',
@@ -185,7 +185,7 @@ function formatTime(t: string | null | undefined): string {
                   ? 'text-transparent'
                   : c.isEvent
                     ? 'bg-lilac-500 font-bold text-white shadow-md'
-                    : 'bg-lilac-50/80 text-slate-700'
+                    : 'bg-white/70 text-slate-700 backdrop-blur-sm'
               "
             >
               {{ c.day != null ? c.day : '' }}
@@ -255,19 +255,19 @@ function formatTime(t: string | null | undefined): string {
           v-if="countdown"
           class="mt-4 grid grid-cols-2 gap-3 font-sans text-center sm:grid-cols-4"
         >
-          <div class="rounded-2xl bg-lilac-50 px-3 py-4">
+          <div class="rounded-2xl border border-lilac-200/60 bg-white/75 px-3 py-4 shadow-sm backdrop-blur-sm">
             <p class="text-3xl font-bold text-lilac-700">{{ countdown.days }}</p>
             <p class="text-xs uppercase tracking-wide text-slate-500">días</p>
           </div>
-          <div class="rounded-2xl bg-lilac-50 px-3 py-4">
+          <div class="rounded-2xl border border-lilac-200/60 bg-white/75 px-3 py-4 shadow-sm backdrop-blur-sm">
             <p class="text-3xl font-bold text-lilac-700">{{ countdown.hours }}</p>
             <p class="text-xs uppercase tracking-wide text-slate-500">horas</p>
           </div>
-          <div class="rounded-2xl bg-lilac-50 px-3 py-4">
+          <div class="rounded-2xl border border-lilac-200/60 bg-white/75 px-3 py-4 shadow-sm backdrop-blur-sm">
             <p class="text-3xl font-bold text-lilac-700">{{ countdown.minutes }}</p>
             <p class="text-xs uppercase tracking-wide text-slate-500">min</p>
           </div>
-          <div class="rounded-2xl bg-lilac-50 px-3 py-4">
+          <div class="rounded-2xl border border-lilac-200/60 bg-white/75 px-3 py-4 shadow-sm backdrop-blur-sm">
             <p class="text-3xl font-bold text-lilac-700">{{ countdown.seconds }}</p>
             <p class="text-xs uppercase tracking-wide text-slate-500">seg</p>
           </div>
