@@ -17,9 +17,8 @@ function open() {
   opening.value = true
 }
 
-function onEnvelopeSceneAnimationEnd(ev: AnimationEvent) {
-  // Con <style scoped>, Vue renombra los @keyframes; animationName no coincide al 100%.
-  if (!ev.animationName.includes('envelope-zoom-through')) return
+function onEnvelopeGateOutEnd(ev: AnimationEvent) {
+  if (!ev.animationName.includes('envelope-gate-out')) return
   if (ev.target !== ev.currentTarget) return
   done.value = true
   emit('opened')
@@ -29,18 +28,20 @@ function onEnvelopeSceneAnimationEnd(ev: AnimationEvent) {
 <template>
   <!-- Capa fija: pantalla completa del sobre (por encima del resto de la SPA) -->
   <div
-    class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-transparent px-4 text-center sm:px-6"
+    class="fixed inset-0 z-50 bg-transparent"
     :class="{ 'pointer-events-none opacity-0 transition-none': done }"
     aria-live="polite"
   >
-    <!-- Fondo pastel a pantalla: sin escala (solo la carta hace zoom) -->
-    <div
-      class="relative flex min-h-svh w-full max-w-none flex-col items-center justify-center"
-    >
-      <InvitationPastelBackdrop />
+    <!-- Fondo pastel: fuera del nodo con scale (fixed real al viewport; no hereda transform) -->
+    <InvitationPastelBackdrop />
 
-      <!-- Mariposas + carta: las mariposas no heredan la escala de apertura -->
-      <div class="relative z-10 mb-10 max-w-md w-full">
+    <!-- Solo mariposas + carta: 100% → 95% → desvanecido -->
+    <div
+      class="relative z-10 flex min-h-svh w-full flex-col items-center justify-center px-4 text-center sm:px-6 origin-center"
+      :class="opening ? 'envelope-gate-out' : ''"
+      @animationend="onEnvelopeGateOutEnd"
+    >
+      <div class="relative mb-10 max-w-md w-full">
         <div
           v-for="n in 14"
           :key="n"
@@ -63,12 +64,7 @@ function onEnvelopeSceneAnimationEnd(ev: AnimationEvent) {
           />
         </div>
 
-        <!-- Solo esta tarjeta (mensaje + botón): 95% → zoom rápido → desvanecido -->
-        <div
-          class="relative mx-auto w-[min(88vw,320px)] origin-center"
-          :class="opening ? 'envelope-zoom-through' : ''"
-          @animationend="onEnvelopeSceneAnimationEnd"
-        >
+        <div class="relative mx-auto w-[min(88vw,320px)]">
           <!-- Nota sobre: textura papel sobre (sobre.webp) + título, texto y botón -->
           <div class="relative z-10 overflow-hidden rounded-2xl border border-lilac-200/90 shadow-paper">
             <!-- Textura del sobre (imagen de fondo) -->
@@ -116,35 +112,23 @@ function onEnvelopeSceneAnimationEnd(ev: AnimationEvent) {
 </template>
 
 <style scoped>
-/* Apertura: leve reducción → zoom que acelera al final (sin “plateau”) → desvanecido muy corto */
-@keyframes envelope-zoom-through {
+/* Cierre simple: ligera reducción a 95% y luego desvanecido */
+@keyframes envelope-gate-out {
   0% {
     transform: scale(1);
     opacity: 1;
-    animation-timing-function: ease-out;
   }
-  9% {
-    transform: scale(0.95) translateY(0.45rem);
+  28% {
+    transform: scale(0.95) translateY(0.35rem);
     opacity: 1;
-    /* Zoom que gana velocidad hacia el final (evita pausa perceptible antes del fade) */
-    animation-timing-function: cubic-bezier(0.2, 0.85, 0.2, 1);
-  }
-  72% {
-    transform: scale(10.5) translateY(0);
-    opacity: 1;
-    animation-timing-function: cubic-bezier(0.4, 0, 1, 1);
-  }
-  88% {
-    transform: scale(12) translateY(0);
-    opacity: 0;
   }
   100% {
-    transform: scale(12) translateY(0);
+    transform: scale(0.95) translateY(0.35rem);
     opacity: 0;
   }
 }
-.envelope-zoom-through {
-  animation: envelope-zoom-through 1.35s forwards;
+.envelope-gate-out {
+  animation: envelope-gate-out 1.1s ease-in forwards;
   will-change: transform, opacity;
 }
 
