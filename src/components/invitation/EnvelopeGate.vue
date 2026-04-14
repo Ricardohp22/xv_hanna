@@ -77,11 +77,11 @@ function onEnvelopeGateOutEnd(ev: AnimationEvent) {
             />
             <!-- Contenido: mensaje inicial + acción -->
             <div class="relative z-[1] px-6 py-8 text-center sm:px-8 sm:py-9">
-              <p class="font-script text-2xl text-lilac-700 sm:text-3xl">Apreciable familia</p>
+              <p class="font-script text-3xl sm:text-3xl">Apreciable familia:</p>
               <p class="mt-1 font-display text-4xl leading-tight text-lilac-600 sm:text-5xl">
                 <slot name="family" />
               </p>
-              <p class="mt-6 font-sans text-base leading-relaxed text-slate-800">
+              <p class="mt-6 font-elegant text-base font-semibold italic leading-relaxed text-slate-800">
                 Hoy empieza la cuenta regresiva para uno de los días más especiales de mi vida y quiero que lo compartas
                 conmigo. Dentro de este sobre encontrarás todo lo que mi familia y yo queremos compartir con ustedes!.
               </p>
