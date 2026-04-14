@@ -43,35 +43,53 @@ const countdownTitle = computed(() => {
   return 'Cuenta regresiva para la fiesta'
 })
 
+/**
+ * `event.event_date` solo trae día (DATE). Por JSON puede llegar como `YYYY-MM-DD`
+ * o como ISO (`2026-05-20T00:00:00.000Z`); tomamos siempre los tres componentes iniciales.
+ */
 function parseLocalDate(dateStr: string | null | undefined): Date | null {
-  if (!dateStr) return null
-  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateStr)
+  if (dateStr == null || dateStr === '') return null
+  const s = String(dateStr).trim()
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s)
   if (!m) return null
   const y = Number(m[1])
   const mo = Number(m[2])
   const d = Number(m[3])
+  if (!Number.isFinite(y) || !Number.isFinite(mo) || !Number.isFinite(d)) return null
   return new Date(y, mo - 1, d, 0, 0, 0, 0)
 }
 
-/** Interpreta `TIME` / string devuelto por Postgres (ej. "18:00:00" o "18:00"). */
-function parseStartTimeParts(t: string | null | undefined): { hh: number; mm: number; ss: number } | null {
-  if (t == null || typeof t !== 'string') return null
-  const m = /^(\d{1,2}):(\d{2})(?::(\d{2}))?/.exec(t.trim())
-  if (!m) return null
-  const hh = Number(m[1])
-  const mm = Number(m[2])
-  const ss = Number(m[3] ?? 0)
-  if (!Number.isFinite(hh) || !Number.isFinite(mm)) return null
-  return { hh, mm, ss: Number.isFinite(ss) ? ss : 0 }
+/**
+ * `venue.start_time` solo trae hora (TIME). Puede llegar como `HH:MM:SS`, `HH:MM`
+ * o embebido en ISO (`1970-01-01T18:30:00.000Z` desde node-pg serializado).
+ */
+function parseStartTimeParts(t: unknown): { hh: number; mm: number; ss: number } | null {
+  if (t == null || t === '') return null
+  const s = String(t).trim()
+  let m = /^(\d{1,2}):(\d{2})(?::(\d{2}))?(?:\.\d+)?$/.exec(s)
+  if (m) {
+    const hh = Number(m[1])
+    const mm = Number(m[2])
+    const ss = Number(m[3] ?? 0)
+    if (Number.isFinite(hh) && Number.isFinite(mm) && Number.isFinite(ss)) return { hh, mm, ss }
+  }
+  m = /T(\d{1,2}):(\d{2})(?::(\d{2}))?/.exec(s)
+  if (m) {
+    const hh = Number(m[1])
+    const mm = Number(m[2])
+    const ss = Number(m[3] ?? 0)
+    if (Number.isFinite(hh) && Number.isFinite(mm) && Number.isFinite(ss)) return { hh, mm, ss }
+  }
+  return null
 }
 
-/** Instante local = `event.event_date` + `venue.start_time` del venue elegido. */
+/** Instante local = fecha del evento + hora del venue (misma fecha civil + reloj local). */
 function countdownTargetDateTime(): Date | null {
-  const d0 = parseLocalDate(props.eventDate)
+  const day = parseLocalDate(props.eventDate)
   const venue = countdownVenue.value
-  const parts = parseStartTimeParts(venue?.start_time ?? null)
-  if (!d0 || !parts) return null
-  return new Date(d0.getFullYear(), d0.getMonth(), d0.getDate(), parts.hh, parts.mm, parts.ss, 0)
+  const clock = parseStartTimeParts(venue?.start_time ?? null)
+  if (!day || !clock) return null
+  return new Date(day.getFullYear(), day.getMonth(), day.getDate(), clock.hh, clock.mm, clock.ss, 0)
 }
 
 const countdown = computed(() => {
