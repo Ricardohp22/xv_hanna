@@ -7,7 +7,7 @@ const ASSETS = {
   floresAzules: '/flores_azules.webp',
   floresMoradas: '/flores_moradas.webp',
   manchas: '/manchas_pequeñas_azules.png',
-  mariposa: '/mariposa.webp',
+  mariposa: '/mariposa_icon.png',
   nubes: '/nubes_azul_morado.webp',
   ramillete: '/ramillete_azul.webp',
 } as const
@@ -78,7 +78,7 @@ const ASSETS = {
     <img
       :src="ASSETS.mariposa"
       alt=""
-      class="absolute right-[2%] top-[38%] w-[min(22vw,120px)] opacity-[0.75] -rotate-[14deg] select-none"
+      class="absolute right-[2%] top-[38%] w-[min(22vw,120px)] opacity-[0.75] -rotate-[14deg] select-none motion-safe:animate-float"
       loading="lazy"
       decoding="async"
     />
@@ -115,7 +115,7 @@ const ASSETS = {
     <img
       :src="ASSETS.mariposa"
       alt=""
-      class="absolute right-[18%] top-[6%] w-[min(16vw,88px)] opacity-[0.55] rotate-[22deg] scale-x-[-1] select-none md:right-[22%]"
+      class="absolute right-[18%] top-[6%] w-[min(16vw,88px)] opacity-[0.55] rotate-[22deg] scale-x-[-1] select-none motion-safe:animate-float md:right-[22%]"
       loading="lazy"
       decoding="async"
     />

@@ -19,7 +19,7 @@ function fmt(dt: string | null | undefined): string {
 </script>
 
 <template>
-  <section id="cronograma" class="relative bg-lilac-50 px-5 py-16 sm:px-10 md:py-24">
+  <section id="cronograma" class="relative bg-lilac-50 px-3 py-16 sm:px-4 md:px-5 md:py-24">
     <div class="mx-auto max-w-3xl text-center">
       <h2 class="font-display text-4xl text-lilac-700 sm:text-5xl">Cronograma</h2>
       <p class="mt-3 font-sans text-sm text-slate-600">Un vistazo a los momentos más especiales.</p>
@@ -38,7 +38,7 @@ function fmt(dt: string | null | undefined): string {
           class="relative flex flex-col items-stretch gap-4 md:grid md:grid-cols-2 md:items-center"
         >
           <div
-            class="md:pr-10"
+            class="md:pr-5"
             :class="idx % 2 === 0 ? 'md:col-start-1 md:text-right' : 'md:col-start-2 md:text-left'"
           >
             <div

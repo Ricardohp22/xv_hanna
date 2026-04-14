@@ -75,7 +75,7 @@ onUnmounted(() => {
   >
     <button
       type="button"
-      class="absolute left-2 top-1/2 z-20 -translate-y-1/2 rounded-full bg-white/20 p-3 text-white backdrop-blur-sm transition hover:bg-white/30 sm:left-4"
+      class="absolute left-1 top-1/2 z-20 -translate-y-1/2 rounded-full bg-white/20 p-2.5 text-white backdrop-blur-sm transition hover:bg-white/30 sm:left-2 sm:p-3"
       aria-label="Foto anterior"
       @click="go(-1)"
     >
@@ -83,7 +83,7 @@ onUnmounted(() => {
     </button>
     <button
       type="button"
-      class="absolute right-2 top-1/2 z-20 -translate-y-1/2 rounded-full bg-white/20 p-3 text-white backdrop-blur-sm transition hover:bg-white/30 sm:right-4"
+      class="absolute right-1 top-1/2 z-20 -translate-y-1/2 rounded-full bg-white/20 p-2.5 text-white backdrop-blur-sm transition hover:bg-white/30 sm:right-2 sm:p-3"
       aria-label="Foto siguiente"
       @click="go(1)"
     >
@@ -104,7 +104,7 @@ onUnmounted(() => {
               class="absolute inset-0 bg-gradient-to-t from-lilac-950/85 via-lilac-900/35 to-transparent"
             />
             <div
-              class="absolute inset-x-0 bottom-0 top-0 flex items-end justify-center px-6 pb-28 text-center sm:pb-32"
+              class="absolute inset-x-0 bottom-0 top-0 flex items-end justify-center px-3 pb-28 text-center sm:px-4 sm:pb-32"
             >
               <p
                 class="max-w-xl font-script text-3xl leading-snug text-white drop-shadow-lg sm:text-4xl md:text-5xl"
@@ -134,7 +134,7 @@ onUnmounted(() => {
 
     <div
       v-else
-      class="flex h-[100svh] items-center justify-center px-6 text-center font-sans text-white/80"
+      class="flex h-[100svh] items-center justify-center px-3 text-center font-sans text-white/80 sm:px-4"
     >
       Pronto habrá fotos mágicas por aquí.
     </div>

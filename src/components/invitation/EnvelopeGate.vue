@@ -38,17 +38,23 @@ function open() {
       <div
         v-for="n in 14"
         :key="n"
-        class="pointer-events-none absolute text-white/25"
+        class="pointer-events-none absolute flex items-center justify-center"
         :class="opening ? `bfly-${n}` : 'opacity-0'"
         :style="{ animationDelay: `${n * 0.08}s` }"
         aria-hidden="true"
       >
-        <svg class="h-6 w-6" viewBox="0 0 32 32" fill="currentColor">
-          <path
-            d="M12 4c-2 4-6 6-8 8 2 2 6 2 8 0-1-3-1-6 0-8zm8 0c2 4 6 6 8 8-2 2-6 2-8 0 1-3 1-6 0-8z"
-            transform="translate(4,6) scale(1.1)"
-          />
-        </svg>
+        <img
+          src="/mariposa_icon.png"
+          alt=""
+          class="h-auto object-contain drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)]"
+          :class="n % 2 === 0 ? 'scale-x-[-1]' : ''"
+          :style="{
+            width: `${26 + (n % 6) * 8}px`,
+            opacity: 0.5 + (n % 5) * 0.09,
+          }"
+          loading="eager"
+          decoding="async"
+        />
       </div>
 
       <div
@@ -68,9 +74,17 @@ function open() {
           </p>
           <button
             type="button"
-            class="mt-8 inline-flex items-center justify-center rounded-full bg-white px-8 py-3 font-sans text-sm font-semibold text-lilac-700 shadow-lg transition hover:bg-blush hover:text-lilac-900"
+            class="mt-8 inline-flex items-center justify-center gap-2.5 rounded-full bg-white px-8 py-3 font-sans text-sm font-semibold text-lilac-700 shadow-lg transition hover:bg-blush hover:text-lilac-900"
             @click="open"
           >
+            <img
+              src="/mariposa_icon.png"
+              alt=""
+              class="h-6 w-6 shrink-0 object-contain opacity-90 motion-safe:animate-float"
+              aria-hidden="true"
+              loading="eager"
+              decoding="async"
+            />
             Abrir sobre
           </button>
         </div>

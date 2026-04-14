@@ -65,7 +65,7 @@ const quinceName = computed(() => bundle.value?.event?.name || 'Hanna')
 </script>
 
 <template>
-  <div v-if="!familyId" class="flex min-h-svh flex-col items-center justify-center bg-lilac-100 px-6 text-center">
+  <div v-if="!familyId" class="flex min-h-svh flex-col items-center justify-center bg-lilac-100 px-3 text-center sm:px-4">
     <p class="font-display text-4xl text-lilac-700">Invitación</p>
     <p class="mt-4 max-w-md font-sans text-sm text-slate-600">
       Falta el parámetro
@@ -77,7 +77,7 @@ const quinceName = computed(() => bundle.value?.event?.name || 'Hanna')
 
   <div
     v-else-if="loadError"
-    class="flex min-h-svh flex-col items-center justify-center bg-lilac-100 px-6 text-center"
+    class="flex min-h-svh flex-col items-center justify-center bg-lilac-100 px-3 text-center sm:px-4"
   >
     <p class="font-display text-3xl text-lilac-700">No pudimos abrir tu invitación</p>
     <p class="mt-3 max-w-md font-sans text-sm text-red-700">{{ loadError }}</p>
@@ -93,7 +93,7 @@ const quinceName = computed(() => bundle.value?.event?.name || 'Hanna')
     </EnvelopeGate>
 
     <div
-      class="relative isolate min-h-svh bg-white pb-24 pl-8 pr-8 sm:pl-14 sm:pr-14 md:pl-20 md:pr-20"
+      class="relative isolate min-h-svh bg-white px-3 pb-24 sm:px-4 md:px-5"
     >
       <InvitationPastelBackdrop v-if="!showEnvelope" />
       <div class="relative z-[1]">

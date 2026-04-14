@@ -93,7 +93,7 @@ function formatTime(t: string | null | undefined): string {
 <template>
   <section
     id="fecha-lugar"
-    class="relative min-h-[150svh] bg-gradient-to-b from-lilac-100 via-white to-lilac-50 px-5 py-16 sm:px-10 md:py-24"
+    class="relative min-h-[150svh] bg-gradient-to-b from-lilac-100 via-white to-lilac-50 px-3 py-16 sm:px-4 md:px-5 md:py-24"
   >
     <div class="mx-auto max-w-3xl">
       <h2 class="text-center font-display text-4xl text-lilac-700 sm:text-5xl">¿Cuándo y dónde?</h2>
@@ -110,7 +110,7 @@ function formatTime(t: string | null | undefined): string {
       </p>
 
       <div
-        class="mt-10 rounded-3xl border border-lilac-200 bg-white/95 p-6 shadow-paper sm:p-8"
+        class="mt-10 rounded-3xl border border-lilac-200 bg-white/95 px-4 py-6 shadow-paper sm:px-5 sm:py-7 md:px-6"
       >
         <p class="text-center font-script text-2xl text-lilac-600">Cuenta regresiva para la misa</p>
         <div
@@ -142,7 +142,7 @@ function formatTime(t: string | null | undefined): string {
 
       <div
         v-if="calendar"
-        class="mt-10 rounded-3xl border border-lilac-200 bg-white/95 p-6 shadow-paper sm:p-8"
+        class="mt-10 rounded-3xl border border-lilac-200 bg-white/95 px-4 py-6 shadow-paper sm:px-5 sm:py-7 md:px-6"
       >
         <p class="text-center font-sans text-sm font-semibold uppercase tracking-wide text-lilac-600">
           Calendario
@@ -178,7 +178,7 @@ function formatTime(t: string | null | undefined): string {
       <div class="mt-12 grid gap-8 md:grid-cols-2">
         <article
           v-if="misa"
-          class="rounded-3xl border border-lilac-200 bg-white/95 p-6 shadow-paper sm:p-7"
+          class="rounded-3xl border border-lilac-200 bg-white/95 px-4 py-6 shadow-paper sm:px-5 sm:py-6 md:px-5"
         >
           <div class="flex items-start gap-3">
             <span class="text-3xl" aria-hidden="true">⛪</span>
@@ -205,7 +205,7 @@ function formatTime(t: string | null | undefined): string {
 
         <article
           v-if="fiesta"
-          class="rounded-3xl border border-lilac-200 bg-white/95 p-6 shadow-paper sm:p-7"
+          class="rounded-3xl border border-lilac-200 bg-white/95 px-4 py-6 shadow-paper sm:px-5 sm:py-6 md:px-5"
         >
           <div class="flex items-start gap-3">
             <span class="text-3xl" aria-hidden="true">🎉</span>
@@ -231,7 +231,7 @@ function formatTime(t: string | null | undefined): string {
         </article>
       </div>
 
-      <div class="mt-12 rounded-3xl border border-lilac-200 bg-white/95 p-6 shadow-paper sm:p-8">
+      <div class="mt-12 rounded-3xl border border-lilac-200 bg-white/95 px-4 py-6 shadow-paper sm:px-5 sm:py-7 md:px-6">
         <h3 class="text-center font-display text-3xl text-lilac-700">Indicaciones adicionales</h3>
         <p class="mt-4 font-sans text-base leading-relaxed text-slate-700">
           {{
