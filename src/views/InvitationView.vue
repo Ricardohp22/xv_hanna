@@ -99,10 +99,10 @@ const quinceName = computed(() => bundle.value?.event?.name || 'Hanna')
       <div class="relative z-[1]">
         <FloatingTicketBtn />
 
-        <CarouselHero :slides="bundle.carousel?.slides || []" />
-
         <SectionFormalInvite :family-name="bundle.family.family_name" :quince-name="quinceName" />
 
+        <CarouselHero :slides="bundle.carousel?.slides || []" />
+        
         <SectionSponsors :sponsors="bundle.sponsors" />
 
         <SectionVenue :venues="bundle.venues" :event-date="bundle.event?.event_date || null" />
