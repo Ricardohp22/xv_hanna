@@ -205,7 +205,7 @@ function venueMapsUrl(venue: VenueRow): string {
           <div class="flex items-start gap-3 sm:gap-4">
 <!--             <span class="shrink-0 text-3xl sm:text-4xl" aria-hidden="true">⛪</span> -->            <div class="min-w-0 flex-1">
               <h3 class="font-script text-2xl text-lilac-700 sm:text-3xl">Misa</h3>
-              <p class="mt-1 font-sans text-sm font-semibold uppercase tracking-wide text-lilac-600">Iglesia</p>
+              <!-- <p class="mt-1 font-sans text-sm font-semibold uppercase tracking-wide text-lilac-600">Iglesia</p> -->
               <p class="mt-1 font-sans text-base font-semibold text-slate-800">{{ misa.name }}</p>
               <p class="mt-2 font-sans text-sm leading-relaxed text-slate-600">{{ misa.address }}</p>
               <p class="mt-2 font-sans text-sm text-lilac-700">
@@ -232,7 +232,7 @@ function venueMapsUrl(venue: VenueRow): string {
 <!--             <span class="shrink-0 text-3xl sm:text-4xl" aria-hidden="true">🎉</span> -->
             <div class="min-w-0 flex-1">
               <h3 class="font-script text-2xl text-lilac-700 sm:text-3xl">Fiesta</h3>
-              <p class="mt-1 font-sans text-sm font-semibold uppercase tracking-wide text-lilac-600">Recepción</p>
+              <!-- <p class="mt-1 font-sans text-sm font-semibold uppercase tracking-wide text-lilac-600">Recepción</p> -->
               <p class="mt-1 font-sans text-base font-semibold text-slate-800">{{ fiesta.name }}</p>
               <p class="mt-2 font-sans text-sm leading-relaxed text-slate-600">{{ fiesta.address }}</p>
               <p class="mt-2 font-sans text-sm text-lilac-700">
