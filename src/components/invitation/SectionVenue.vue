@@ -134,12 +134,17 @@ function formatTime(t: string | null | undefined): string {
   const h12 = ((h + 11) % 12) + 1
   return `${h12}:${(mm || '00').padStart(2, '0')} ${ampm}`
 }
+
+function venueMapsUrl(venue: VenueRow): string {
+  if (venue.mapUrl) return venue.mapUrl
+  return googleMapsSearchUrl(`${venue.name || ''} ${venue.address || ''}`)
+}
 </script>
 
 <template>
   <section
     id="fecha-lugar"
-    class="relative min-h-[150svh] bg-gradient-to-b from-white/70 via-transparent to-white/50 px-3 py-4 sm:px-4 md:px-5 md:py-24"
+    class="relative bg-gradient-to-b from-white/70 via-transparent to-white/50 px-3 py-4 sm:px-4 sm:py-8 md:px-5 md:py-10"
   >
     <div class="mx-auto max-w-3xl">
       <!-- Tarjeta principal: título, fecha, calendario del mes, misa, fiesta -->
@@ -147,17 +152,7 @@ function formatTime(t: string | null | undefined): string {
         class="rounded-3xl border border-lilac-200 bg-white/95 px-4 py-6 shadow-paper sm:px-6 sm:py-8 md:px-8 md:py-9"
       >
         <h2 class="text-center font-display text-4xl text-lilac-700 sm:text-5xl">¿Cuándo y dónde?</h2>
-        <p v-if="eventDate" class="mt-4 text-center font-sans text-lg text-slate-700">
-          
-          <span class="font-semibold text-lilac-700">{{
-            parseLocalDate(eventDate)?.toLocaleDateString('es-MX', {
-              weekday: 'long',
-              day: 'numeric',
-              month: 'long',
-              year: 'numeric',
-            })
-          }}</span>
-        </p>
+        
 
         <div class="my-8 border-t border-lilac-200/70" aria-hidden="true" />
 
@@ -192,6 +187,17 @@ function formatTime(t: string | null | undefined): string {
             </span>
           </div>
         </template>
+        <p v-if="eventDate" class="mt-4 text-center font-sans text-lg text-slate-700">
+          
+          <span class="font-semibold text-lilac-700">{{
+            parseLocalDate(eventDate)?.toLocaleDateString('es-MX', {
+              weekday: 'long',
+              day: 'numeric',
+              month: 'long',
+              year: 'numeric',
+            })
+          }}</span>
+        </p>
 
         <template v-if="misa">
           <div class="my-8 border-t border-lilac-200/70" aria-hidden="true" />
@@ -209,7 +215,7 @@ function formatTime(t: string | null | undefined): string {
               <a
                 v-if="misa.address"
                 class="mt-4 inline-flex items-center rounded-full bg-lilac-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-lilac-500"
-                :href="googleMapsSearchUrl(`${misa.name || ''} ${misa.address}`)"
+                :href="venueMapsUrl(misa)"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -236,7 +242,7 @@ function formatTime(t: string | null | undefined): string {
               <a
                 v-if="fiesta.address"
                 class="mt-4 inline-flex items-center rounded-full bg-lilac-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-lilac-500"
-                :href="googleMapsSearchUrl(`${fiesta.name || ''} ${fiesta.address}`)"
+                :href="venueMapsUrl(fiesta)"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -248,7 +254,7 @@ function formatTime(t: string | null | undefined): string {
       </div>
 
       <div
-        class="mt-10 rounded-3xl border border-lilac-200/70 bg-white/75 px-3 py-4 shadow-paper backdrop-blur-[2px] sm:px-5 sm:py-6 md:px-6"
+        class="mt-5 rounded-3xl border border-lilac-200/70 bg-white/75 px-3 py-4 shadow-paper backdrop-blur-[2px] sm:mt-6 sm:px-5 sm:py-6 md:px-6"
       >
         <p class="text-center font-script text-xl text-lilac-600/90 sm:text-2xl">{{ countdownTitle }}</p>
         <div

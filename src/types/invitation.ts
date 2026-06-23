@@ -20,6 +20,7 @@ export interface VenueRow {
   id: number
   name: string | null
   address: string | null
+  mapUrl?: string | null
   type: VenueType
   start_time: string | null
   end_time: string | null
@@ -29,6 +30,12 @@ export interface SponsorRow {
   id: number
   name: string
   role: string | null
+}
+
+export interface ParentRow {
+  id: number
+  name: string
+  role: string
 }
 
 export interface ScheduleRow {
@@ -56,6 +63,7 @@ export interface InvitationBundle {
   family: Family
   event: EventRow | null
   venues: VenueRow[]
+  parents: ParentRow[]
   sponsors: SponsorRow[]
   schedule: ScheduleRow[]
   guests: GuestRow[]

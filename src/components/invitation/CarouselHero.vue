@@ -6,62 +6,51 @@ const props = defineProps<{
   slides: CarouselSlide[]
 }>()
 
-/** Índice en el riel extendido (clon al inicio/fin si hay >1 slide) */
-const slidePosition = ref(0)
-const instantMove = ref(false)
+const AUTOPLAY_MS = 10000
+
+/** Índice real del slide visible. Siempre debe estar entre 0 y list.length - 1. */
+const currentSlideIndex = ref(0)
 const touchStartX = ref<number | null>(null)
 let timer: ReturnType<typeof setInterval> | null = null
 
 const list = computed(() => (props.slides?.length ? props.slides : []))
 
-/** [última, ...todas, primera] para transición circular sin salto visual */
-const extendedSlides = computed((): CarouselSlide[] => {
-  const L = list.value
-  const n = L.length
-  if (n === 0) return []
-  if (n === 1) return L
-  return [L[n - 1]!, ...L, L[0]!]
-})
-
 const dotCount = computed(() => Math.min(list.value.length, 5))
-
-const logicalIndex = computed(() => {
-  const n = list.value.length
-  if (n <= 1) return 0
-  const p = slidePosition.value
-  if (p === 0) return n - 1
-  if (p === n + 1) return 0
-  return p - 1
-})
 
 const activeDot = computed(() => {
   const len = list.value.length
   if (len <= 1) return 0
   const dots = dotCount.value
-  if (len <= dots) return logicalIndex.value
+  if (len <= dots) return currentSlideIndex.value
   const max = dots - 1
-  return Math.round((logicalIndex.value / (len - 1)) * max)
+  return Math.round((currentSlideIndex.value / (len - 1)) * max)
 })
 
-function resetPosition() {
+function normalizeIndex() {
   const n = list.value.length
-  slidePosition.value = n <= 1 ? 0 : 1
+  if (n === 0) {
+    currentSlideIndex.value = 0
+    return
+  }
+  if (currentSlideIndex.value < 0 || currentSlideIndex.value >= n) {
+    currentSlideIndex.value = 0
+  }
 }
 
-function go(delta: number) {
+function go(delta: number, restart = true) {
   const n = list.value.length
-  if (!n) return
-  if (n === 1) return
-  slidePosition.value += delta
-  restartAutoplay()
+  if (n <= 1) return
+  currentSlideIndex.value = (currentSlideIndex.value + delta + n) % n
+  if (restart) restartAutoplay()
 }
 
 function restartAutoplay() {
   if (timer) clearInterval(timer)
+  timer = null
   if (list.value.length <= 1) return
   timer = setInterval(() => {
-    go(1)
-  }, 5000)
+    go(1, false)
+  }, AUTOPLAY_MS)
 }
 
 function onTouchStart(e: TouchEvent) {
@@ -78,46 +67,22 @@ function onTouchEnd(e: TouchEvent) {
   else go(-1)
 }
 
-function onTrackTransitionEnd(ev: TransitionEvent) {
-  if (instantMove.value) return
-  if (ev.propertyName !== 'transform') return
-  const n = list.value.length
-  if (n <= 1) return
-  const p = slidePosition.value
-  if (p === n + 1) {
-    instantMove.value = true
-    slidePosition.value = 1
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        instantMove.value = false
-      })
-    })
-  } else if (p === 0) {
-    instantMove.value = true
-    slidePosition.value = n
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        instantMove.value = false
-      })
-    })
-  }
-}
-
 watch(
   () => props.slides,
   () => {
-    resetPosition()
+    normalizeIndex()
     restartAutoplay()
   },
   { deep: true }
 )
 
 watch(list, () => {
-  resetPosition()
+  normalizeIndex()
+  restartAutoplay()
 })
 
 onMounted(() => {
-  resetPosition()
+  normalizeIndex()
   restartAutoplay()
 })
 onUnmounted(() => {
@@ -127,7 +92,7 @@ onUnmounted(() => {
 
 <template>
   <section
-    class="relative left-1/2 min-h-svh w-screen max-w-[100vw] -translate-x-1/2 overflow-hidden bg-lilac-900"
+    class="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 overflow-hidden bg-lilac-900"
     @touchstart.passive="onTouchStart"
     @touchend.passive="onTouchEnd"
   >
@@ -148,21 +113,15 @@ onUnmounted(() => {
       ›
     </button>
 
-    <div v-if="list.length" class="relative h-[100svh] w-full">
+    <div v-if="list.length" class="relative aspect-[4/5] w-full sm:aspect-[16/9] lg:aspect-[21/9]">
       <div
-        class="flex h-full w-full"
-        :class="
-          instantMove
-            ? 'transition-none duration-0'
-            : 'transition-transform duration-700 ease-in-out will-change-transform'
-        "
-        :style="{ transform: `translate3d(-${slidePosition * 100}vw, 0, 0)` }"
-        @transitionend="onTrackTransitionEnd"
+        class="flex h-full w-full transition-transform duration-700 ease-in-out will-change-transform"
+        :style="{ transform: `translate3d(-${currentSlideIndex * 100}%, 0, 0)` }"
       >
         <div
-          v-for="(slide, i) in extendedSlides"
+          v-for="(slide, i) in list"
           :key="`${i}-${slide.image}`"
-          class="relative h-[100svh] w-screen shrink-0"
+          class="relative h-full w-full shrink-0"
         >
           <img
             :src="slide.image"
@@ -175,7 +134,7 @@ onUnmounted(() => {
             class="pointer-events-none absolute inset-0 bg-gradient-to-t from-lilac-950/85 via-lilac-900/35 to-transparent"
           />
           <div
-            class="pointer-events-none absolute inset-x-0 bottom-0 top-0 flex items-end justify-center px-3 pb-28 text-center sm:px-4 sm:pb-32"
+            class="pointer-events-none absolute inset-x-0 bottom-0 top-0 flex items-end justify-center px-3 pb-12 text-center sm:px-4 sm:pb-16"
           >
             <p
               class="max-w-xl font-script text-3xl leading-snug text-white drop-shadow-lg sm:text-4xl md:text-5xl"
@@ -204,7 +163,7 @@ onUnmounted(() => {
 
     <div
       v-else
-      class="flex h-[100svh] items-center justify-center px-3 text-center font-sans text-white/80 sm:px-4"
+      class="flex aspect-[4/5] items-center justify-center px-3 text-center font-sans text-white/80 sm:aspect-[16/9] sm:px-4 lg:aspect-[21/9]"
     >
       Pronto habrá fotos mágicas por aquí.
     </div>

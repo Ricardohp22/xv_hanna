@@ -25,7 +25,7 @@ defineProps<{
           />
 
           <p
-            class="mt-3 shrink-0 bg-purple-900 bg-clip-text font-display text-7xl leading-[0.95] text-transparent sm:text-6xl md:text-7xl"
+            class="mt-3 shrink-0 bg-purple-900 bg-clip-text font-display text-5xl leading-[0.95] text-transparent sm:text-6xl md:text-7xl"
           >
             {{ quinceName || 'Hannah' }}
           </p>
@@ -33,7 +33,6 @@ defineProps<{
           <p
             class="mx-auto mt-3 max-w-xl shrink-0 font-elegant text-base font-semibold italic leading-snug text-slate-700 sm:mt-4 sm:text-base md:max-w-2xl"
           >
-            Querida Familia
             <span class="text-lg font-semibold text-lilac-700">{{ familyName }}</span
             >:<br />
             Estan cordialmente invitados para ser parte de esta celebración.
@@ -73,7 +72,7 @@ defineProps<{
       <span
         class="font-elegant text-[0.65rem] font-semibold uppercase tracking-[0.38em] text-lilac-600/80 sm:text-[0.7rem]"
       >
-        Continúa abajo
+        Desliza abajo
       </span>
       <div
         class="formal-invite-scroll-cue flex flex-col items-center gap-0.5"

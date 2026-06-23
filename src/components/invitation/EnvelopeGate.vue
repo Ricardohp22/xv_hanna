@@ -56,10 +56,7 @@ function onEnvelopeGateOutEnd(ev: AnimationEvent) {
               aria-hidden="true" />
             <!-- Contenido: mensaje inicial + acción -->
             <div class="relative z-[1] px-6 py-8 text-center sm:px-8 sm:py-9">
-              <p class="font-script text-3xl sm:text-3xl">Apreciable familia:</p>
-              <p class="mt-1 font-display text-4xl leading-tight text-lilac-600 sm:text-5xl">
-                <slot name="family" />
-              </p>
+              <p class="mt-1 font-display text-4xl leading-tight text-lilac-600 sm:text-5xl">Apreciable Familia:</p>
               <p class="mt-6 font-elegant text-base font-semibold italic leading-relaxed text-slate-800">
                 “ En esa noche mágica podré alcanzar las estrellas con
                 mis manos y tomarlas prestadas del cielo para
@@ -74,7 +71,7 @@ function onEnvelopeGateOutEnd(ev: AnimationEvent) {
                 <img src="/mariposa_icon.png" alt=""
                   class="h-6 w-6 shrink-0 object-contain opacity-90 motion-safe:animate-float" aria-hidden="true"
                   loading="eager" decoding="async" />
-                Abrir sobre
+                Ver invitación
               </button>
             </div>
           </div>

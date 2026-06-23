@@ -27,7 +27,7 @@ function fmtTimeOnly(dt: string | null | undefined): string {
 </script>
 
 <template>
-  <section id="cronograma" class="relative px-3 pb-4 pt-8 sm:px-4 sm:py-16 md:px-5 md:py-24">
+  <section id="cronograma" class="relative px-3 py-4 sm:px-4 sm:py-8 md:px-5 md:py-10">
     <div class="mx-auto max-w-2xl text-center">
       <p
         class="mx-auto mt-2 inline-block rounded-full border border-lilac-200/80 bg-white/60 px-4 py-1 font-sans text-xs font-semibold uppercase tracking-[0.2em] text-lilac-600 backdrop-blur-sm"
@@ -41,7 +41,7 @@ function fmtTimeOnly(dt: string | null | undefined): string {
       
     </div>
 
-    <div v-if="sortedItems.length" class="relative mx-auto mt-16 max-w-3xl">
+    <div v-if="sortedItems.length" class="relative mx-auto mt-8 max-w-3xl sm:mt-10">
       <!-- Riel vertical continuo -->
       <div
         class="pointer-events-none absolute left-[5.625rem] top-2 bottom-8 w-[3px] -translate-x-1/2 rounded-full bg-gradient-to-b from-lilac-200/90 via-lilac-500 to-lilac-300/80 shadow-[0_0_20px_rgba(139,92,246,0.25)] sm:left-[6.875rem]"

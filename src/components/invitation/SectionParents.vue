@@ -1,34 +1,33 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import SectionPaper from './SectionPaper.vue'
-import type { SponsorRow } from '../../types/invitation'
+import type { ParentRow } from '../../types/invitation'
 
 const props = defineProps<{
-  sponsors: SponsorRow[]
+  parents: ParentRow[]
 }>()
 
-/** Convención fija (sin columna en DB): `public/padrinos/<id>.jpg` */
-function sponsorPhotoSrc(id: number) {
-  return `/padrinos/${id}.png`
+function parentPhotoSrc(id: number) {
+  return `/parents/${id}.png`
 }
 
 const photoLoadFailed = ref<Set<number>>(new Set())
 
-function onSponsorPhotoError(id: number) {
+function onParentPhotoError(id: number) {
   const next = new Set(photoLoadFailed.value)
   next.add(id)
   photoLoadFailed.value = next
 }
 
 const leftColumn = computed(() => {
-  const list = props.sponsors
+  const list = props.parents
   if (!list.length) return []
   const mid = Math.ceil(list.length / 2)
   return list.slice(0, mid)
 })
 
 const rightColumn = computed(() => {
-  const list = props.sponsors
+  const list = props.parents
   if (!list.length) return []
   const mid = Math.ceil(list.length / 2)
   return list.slice(mid)
@@ -36,29 +35,33 @@ const rightColumn = computed(() => {
 </script>
 
 <template>
-  <SectionPaper id="padrinos" wide>
-    <h2 class="text-center font-display text-4xl text-lilac-700 sm:text-5xl">Mis padrinos</h2>
+  <SectionPaper id="padres" wide>
+    <h2 class="text-center font-display text-4xl text-lilac-700 sm:text-5xl">Mis padres</h2>
     <p class="mt-3 text-center font-sans text-sm text-slate-600">
-      Gracias a mis padrinos y a toda mi familia por caminar a mi lado en este sueño y apoyarme incondicionalmente.
+      Gracias por guiarme, cuidarme y estar conmigo en cada paso de este sueño tan especial.
     </p>
 
     <div
-      v-if="sponsors.length"
+      v-if="parents.length"
       class="mt-10 grid grid-cols-1 gap-10 md:grid-cols-2 md:gap-x-0 md:gap-y-10"
     >
       <ul class="flex flex-col gap-8 md:pr-8">
-        <li v-for="s in leftColumn" :key="s.id" class="flex flex-row items-center gap-3.5 text-left">
+        <li
+          v-for="parent in leftColumn"
+          :key="parent.id"
+          class="flex flex-row items-center gap-3.5 text-left"
+        >
           <div
             class="relative flex h-[2.8rem] w-[2.8rem] shrink-0 overflow-hidden rounded-2xl border border-lilac-200/45 bg-gradient-to-br from-white to-lilac-50/70 shadow-[0_1px_4px_rgba(99,79,160,0.06)] ring-1 ring-lilac-200/20 sm:h-[3.15rem] sm:w-[3.15rem]"
           >
             <img
-              v-if="!photoLoadFailed.has(s.id)"
-              :src="sponsorPhotoSrc(s.id)"
+              v-if="!photoLoadFailed.has(parent.id)"
+              :src="parentPhotoSrc(parent.id)"
               alt=""
               class="h-full w-full object-cover opacity-[0.88] saturate-[0.82] contrast-[0.96]"
               loading="lazy"
               decoding="async"
-              @error="onSponsorPhotoError(s.id)"
+              @error="onParentPhotoError(parent.id)"
             />
             <span
               v-else
@@ -68,25 +71,29 @@ const rightColumn = computed(() => {
             </span>
           </div>
           <div class="min-w-0 flex-1">
-            <p class="font-sans text-base font-semibold text-slate-800">{{ s.name }}</p>
-            <p class="mt-0.5 font-sans text-sm text-lilac-700">{{ s.role || 'Padrino / Madrina' }}</p>
+            <p class="font-sans text-base font-semibold text-slate-800">{{ parent.name }}</p>
+            <p class="mt-0.5 font-sans text-sm text-lilac-700">{{ parent.role }}</p>
           </div>
         </li>
       </ul>
 
       <ul class="flex flex-col gap-8 md:border-l md:border-lilac-200/50 md:pl-8">
-        <li v-for="s in rightColumn" :key="s.id" class="flex flex-row items-center gap-3.5 text-left">
+        <li
+          v-for="parent in rightColumn"
+          :key="parent.id"
+          class="flex flex-row items-center gap-3.5 text-left"
+        >
           <div
             class="relative flex h-[2.8rem] w-[2.8rem] shrink-0 overflow-hidden rounded-2xl border border-lilac-200/45 bg-gradient-to-br from-white to-lilac-50/70 shadow-[0_1px_4px_rgba(99,79,160,0.06)] ring-1 ring-lilac-200/20 sm:h-[3.15rem] sm:w-[3.15rem]"
           >
             <img
-              v-if="!photoLoadFailed.has(s.id)"
-              :src="sponsorPhotoSrc(s.id)"
+              v-if="!photoLoadFailed.has(parent.id)"
+              :src="parentPhotoSrc(parent.id)"
               alt=""
               class="h-full w-full object-cover opacity-[0.88] saturate-[0.82] contrast-[0.96]"
               loading="lazy"
               decoding="async"
-              @error="onSponsorPhotoError(s.id)"
+              @error="onParentPhotoError(parent.id)"
             />
             <span
               v-else
@@ -96,15 +103,15 @@ const rightColumn = computed(() => {
             </span>
           </div>
           <div class="min-w-0 flex-1">
-            <p class="font-sans text-base font-semibold text-slate-800">{{ s.name }}</p>
-            <p class="mt-0.5 font-sans text-sm text-lilac-700">{{ s.role || 'Padrino / Madrina' }}</p>
+            <p class="font-sans text-base font-semibold text-slate-800">{{ parent.name }}</p>
+            <p class="mt-0.5 font-sans text-sm text-lilac-700">{{ parent.role }}</p>
           </div>
         </li>
       </ul>
     </div>
 
     <p v-else class="mt-10 text-center font-sans text-sm text-slate-500">
-      Los padrinos se publicarán muy pronto.
+      Los nombres de mis padres se publicarán muy pronto.
     </p>
   </SectionPaper>
 </template>
