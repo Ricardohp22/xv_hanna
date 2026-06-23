@@ -273,7 +273,7 @@ function formatTime(t: string | null | undefined): string {
           </div>
         </div>
         <p v-else class="mt-4 text-center font-sans text-sm text-slate-500">
-          Configura la fecha del evento y el horario de misa o fiesta en la base de datos para ver la cuenta
+          Configura la fecha del evento y el horario de misa o fiesta en el archivo de datos para ver la cuenta
           regresiva.
         </p>
       </div>

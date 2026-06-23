@@ -1,11 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import SectionPaper from './SectionPaper.vue'
-import { fetchJson } from '../../lib/api'
-
-const props = defineProps<{
-  familyId: number
-}>()
 
 const tab = ref<'texto' | 'audio' | 'video'>('texto')
 const senderName = ref('')
@@ -14,7 +9,7 @@ const sending = ref(false)
 const notice = ref<string | null>(null)
 const error = ref<string | null>(null)
 
-async function submitText() {
+function submitText() {
   notice.value = null
   error.value = null
   const s = senderName.value.trim()
@@ -28,18 +23,11 @@ async function submitText() {
     return
   }
   sending.value = true
-  try {
-    await fetchJson(`/api/families/${props.familyId}/messages`, {
-      method: 'POST',
-      body: JSON.stringify({ senderName: s, content: m }),
-    })
+  window.setTimeout(() => {
     message.value = ''
-    notice.value = '¡Tu mensaje fue enviado! Se guardará como un recuerdo muy especial.'
-  } catch (e) {
-    error.value = e instanceof Error ? e.message : 'No se pudo enviar'
-  } finally {
+    notice.value = '¡Gracias por tu mensaje! Se mostrará como enviado en esta invitación.'
     sending.value = false
-  }
+  }, 250)
 }
 </script>
 
@@ -114,14 +102,12 @@ async function submitText() {
 
     <div v-else class="mt-6 rounded-2xl border border-lilac-200/85 bg-white/75 p-5 text-left shadow-sm backdrop-blur-sm">
       <p class="font-sans text-sm leading-relaxed text-slate-700">
-        Por ahora el servidor
-        <span class="font-semibold">no almacena audio ni video</span>
-        . Puedes grabar desde tu dispositivo como ensayo, pero el envío oficial estará disponible cuando
-        habilitemos el almacenamiento seguro de archivos.
+        Esta versión de la invitación funciona con datos fijos y
+        <span class="font-semibold">no guarda archivos en servidor</span>
+        . Puedes grabar desde tu dispositivo como ensayo, pero no se almacenará audio ni video.
       </p>
       <p class="mt-3 font-sans text-sm text-slate-600">
-        Mientras tanto, te invitamos a dejar tu mensaje escrito: es el que la quinceañera conservará en la
-        base de datos.
+        Mientras tanto, te invitamos a dejar tu mensaje escrito para conservarlo fuera de la invitación.
       </p>
     </div>
 

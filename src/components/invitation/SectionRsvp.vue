@@ -1,23 +1,21 @@
 <script setup lang="ts">
 import { computed, reactive, ref, watch } from 'vue'
 import type { GuestRow, RsvpStatus } from '../../types/invitation'
-import { fetchJson } from '../../lib/api'
 
 const props = defineProps<{
-  familyId: number
   guests: GuestRow[]
   extraTicketQuantity: number
 }>()
 
-const emit = defineEmits<{
-  refresh: []
-}>()
-
 const statusByGuest = reactive<Record<number, RsvpStatus>>({})
 const nameByGuest = reactive<Record<number, string>>({})
+const localExtraGuests = ref<GuestRow[]>([])
 const extraName = ref('')
 const saving = ref(false)
+const notice = ref<string | null>(null)
 const error = ref<string | null>(null)
+
+const displayGuests = computed(() => [...props.guests, ...localExtraGuests.value])
 
 function syncFromGuests() {
   for (const g of props.guests) {
@@ -63,58 +61,37 @@ function rsvpOptionButtonClass(isSelected: boolean, option: RsvpStatus): string 
   return `${rsvpBtnBase} ${isSelected ? selected[option] : rsvpInactiveClass}`
 }
 
-async function saveAll() {
+function saveAll() {
   error.value = null
+  notice.value = null
   saving.value = true
-  try {
-    const updates = props.guests.map((g) => ({
-      guestId: g.id,
-      status: statusByGuest[g.id] ?? g.rsvp_status,
-    }))
-    await fetchJson<{ guests: GuestRow[] }>(`/api/families/${props.familyId}/rsvp`, {
-      method: 'PATCH',
-      body: JSON.stringify({ updates }),
-    })
-
-    for (const g of props.guests.filter((x) => x.is_additional)) {
-      const name = (nameByGuest[g.id] || '').trim()
-      if (!name || name === g.name) continue
-      await fetchJson<{ guests: GuestRow[] }>(`/api/families/${props.familyId}/guests/${g.id}`, {
-        method: 'PATCH',
-        body: JSON.stringify({ name }),
-      })
-    }
-
-    emit('refresh')
-  } catch (e) {
-    error.value = e instanceof Error ? e.message : 'No se pudo guardar'
-  } finally {
+  window.setTimeout(() => {
+    notice.value = 'Confirmación registrada en esta invitación.'
     saving.value = false
-  }
+  }, 250)
 }
 
-const additionalCount = () => props.guests.filter((g) => g.is_additional).length
+const additionalCount = () => displayGuests.value.filter((g) => g.is_additional).length
 
-async function addExtraGuest() {
+function addExtraGuest() {
   error.value = null
+  notice.value = null
   const name = extraName.value.trim()
   if (!name) {
     error.value = 'Escribe el nombre del invitado extra'
     return
   }
-  saving.value = true
-  try {
-    await fetchJson(`/api/families/${props.familyId}/guests/extra`, {
-      method: 'POST',
-      body: JSON.stringify({ name }),
-    })
-    extraName.value = ''
-    emit('refresh')
-  } catch (e) {
-    error.value = e instanceof Error ? e.message : 'No se pudo agregar'
-  } finally {
-    saving.value = false
-  }
+  const id = Date.now() * -1
+  localExtraGuests.value.push({
+    id,
+    name,
+    is_primary: false,
+    is_additional: true,
+    rsvp_status: 'pendiente',
+  })
+  statusByGuest[id] = 'pendiente'
+  nameByGuest[id] = name
+  extraName.value = ''
 }
 </script>
 
@@ -150,7 +127,7 @@ async function addExtraGuest() {
 
       <ul class="mt-10 space-y-6">
         <li
-          v-for="g in guests"
+          v-for="g in displayGuests"
           :key="g.id"
           class="rounded-2xl border border-lilac-200/80 bg-white/75 p-4 shadow-sm backdrop-blur-sm sm:p-5"
         >
@@ -212,6 +189,7 @@ async function addExtraGuest() {
         </div>
       </div>
 
+      <p v-if="notice" class="mt-6 text-center font-sans text-sm text-emerald-700">{{ notice }}</p>
       <p v-if="error" class="mt-6 text-center font-sans text-sm text-red-600">{{ error }}</p>
 
       <div class="mt-8 flex justify-center">

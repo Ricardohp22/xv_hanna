@@ -1,8 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
-import { fetchJson } from '../lib/api'
-import type { InvitationBundle } from '../types/invitation'
+import { computed, ref } from 'vue'
 import EnvelopeGate from '../components/invitation/EnvelopeGate.vue'
 import InvitationPastelBackdrop from '../components/invitation/InvitationPastelBackdrop.vue'
 import FloatingTicketBtn from '../components/invitation/FloatingTicketBtn.vue'
@@ -15,19 +12,9 @@ import SectionDressCode from '../components/invitation/SectionDressCode.vue'
 import SectionGifts from '../components/invitation/SectionGifts.vue'
 import SectionRsvp from '../components/invitation/SectionRsvp.vue'
 import SectionSurpriseMessage from '../components/invitation/SectionSurpriseMessage.vue'
+import { invitationData } from '../data/invitationData'
 
-const route = useRoute()
-
-const familyId = computed(() => {
-  const raw = route.query._fam
-  const s = Array.isArray(raw) ? raw[0] : raw
-  const n = Number(s)
-  return Number.isInteger(n) && n > 0 ? n : null
-})
-
-const bundle = ref<InvitationBundle | null>(null)
-const loadError = ref<string | null>(null)
-const loading = ref(false)
+const bundle = invitationData
 const showEnvelope = ref(true)
 const inviteMusicRef = ref<HTMLAudioElement | null>(null)
 
@@ -40,114 +27,57 @@ function playInviteMusic() {
   })
 }
 
-async function load() {
-  loadError.value = null
-  bundle.value = null
-  const id = familyId.value
-  if (!id) return
-  loading.value = true
-  try {
-    bundle.value = await fetchJson<InvitationBundle>(`/api/families/${id}/invitation`)
-  } catch (e) {
-    loadError.value = e instanceof Error ? e.message : 'No se pudo cargar la invitación'
-  } finally {
-    loading.value = false
-  }
-}
-
-watch(
-  familyId,
-  () => {
-    void load()
-  },
-  { immediate: true }
-)
-
-watch(familyId, () => {
-  showEnvelope.value = true
-})
-
 function onEnvelopeOpened() {
   showEnvelope.value = false
 }
 
-const quinceName = computed(() => bundle.value?.event?.name || 'Hanna')
+const quinceName = computed(() => bundle.event?.name || 'Hanna')
 </script>
 
 <template>
-  <div v-if="!familyId" class="flex min-h-svh flex-col items-center justify-center bg-lilac-100 px-3 text-center sm:px-4">
-    <p class="font-display text-4xl text-lilac-700">Invitación</p>
-    <p class="mt-4 max-w-md font-sans text-sm text-slate-600">
-      Falta el parámetro
-      <code class="rounded bg-white/80 px-1 py-0.5 text-lilac-800">_fam</code>
-      en la URL. Ejemplo:
-      <code class="mt-2 block rounded bg-white/80 px-2 py-1 text-xs text-lilac-900">/?_fam=1</code>
-    </p>
-  </div>
+  <audio
+    ref="inviteMusicRef"
+    class="pointer-events-none fixed left-0 top-0 h-px w-px opacity-0"
+    src="/audio/fondo.mp3"
+    preload="auto"
+    loop
+    aria-hidden="true"
+  />
+  <!-- Mismo fondo pastel + mariposas decorativas durante todo el flujo (sobre + invitación) -->
+  <InvitationPastelBackdrop />
+
+  <EnvelopeGate v-if="showEnvelope" @opening="playInviteMusic" @opened="onEnvelopeOpened">
+    <template #family>{{ bundle.family.family_name }}</template>
+  </EnvelopeGate>
 
   <div
-    v-else-if="loadError"
-    class="flex min-h-svh flex-col items-center justify-center bg-lilac-100 px-3 text-center sm:px-4"
+    class="relative z-[1] min-h-svh bg-transparent px-3 pb-24 sm:px-4 md:px-5 motion-safe:transition-[opacity,transform] motion-safe:duration-[480ms] motion-safe:ease-out motion-reduce:transition-none"
+    :class="
+      showEnvelope
+        ? 'pointer-events-none translate-y-2 opacity-0 motion-reduce:translate-y-0'
+        : 'translate-y-0 opacity-100'
+    "
   >
-    <p class="font-display text-3xl text-lilac-700">No pudimos abrir tu invitación</p>
-    <p class="mt-3 max-w-md font-sans text-sm text-red-700">{{ loadError }}</p>
-  </div>
+    <div class="relative z-[1]">
+      <FloatingTicketBtn />
 
-  <div v-else-if="loading || !bundle" class="flex min-h-svh items-center justify-center bg-lilac-100">
-    <p class="animate-pulse font-script text-3xl text-lilac-600">Preparando algo hermoso…</p>
-  </div>
+      <SectionFormalInvite :family-name="bundle.family.family_name" :quince-name="quinceName" />
 
-  <template v-else>
-    <audio
-      ref="inviteMusicRef"
-      class="pointer-events-none fixed left-0 top-0 h-px w-px opacity-0"
-      src="/audio/fondo.mp3"
-      preload="auto"
-      loop
-      aria-hidden="true"
-    />
-    <!-- Mismo fondo pastel + mariposas decorativas durante todo el flujo (sobre + invitación) -->
-    <InvitationPastelBackdrop />
+      <SectionVenue :venues="bundle.venues" :event-date="bundle.event?.event_date || null" />
 
-    <EnvelopeGate v-if="showEnvelope" @opening="playInviteMusic" @opened="onEnvelopeOpened">
-      <template #family>{{ bundle.family.family_name }}</template>
-    </EnvelopeGate>
+      <SectionSponsors :sponsors="bundle.sponsors" />
 
-    <div
-      class="relative z-[1] min-h-svh bg-transparent px-3 pb-24 sm:px-4 md:px-5 motion-safe:transition-[opacity,transform] motion-safe:duration-[480ms] motion-safe:ease-out motion-reduce:transition-none"
-      :class="
-        showEnvelope
-          ? 'pointer-events-none translate-y-2 opacity-0 motion-reduce:translate-y-0'
-          : 'translate-y-0 opacity-100'
-      "
-    >
-      <div class="relative z-[1]">
-        <FloatingTicketBtn />
+      <CarouselHero :slides="bundle.carousel?.slides || []" />
 
-        <SectionFormalInvite :family-name="bundle.family.family_name" :quince-name="quinceName" />
-        
-        <SectionVenue :venues="bundle.venues" :event-date="bundle.event?.event_date || null" />
+      <SectionSchedule :items="bundle.schedule" />
 
-        <SectionSponsors :sponsors="bundle.sponsors" />
+      <SectionDressCode />
 
-        <CarouselHero :slides="bundle.carousel?.slides || []" />
+      <SectionGifts />
 
-        <SectionSchedule :items="bundle.schedule" />
+      <SectionRsvp :guests="bundle.guests" :extra-ticket-quantity="bundle.extraTicketQuantity" />
 
-        <SectionDressCode />
-
-        <SectionGifts />
-
-        <SectionRsvp
-          v-if="familyId"
-          :family-id="familyId"
-          :guests="bundle.guests"
-          :extra-ticket-quantity="bundle.extraTicketQuantity"
-          @refresh="load"
-        />
-
-        <SectionSurpriseMessage v-if="familyId" :family-id="familyId" />
-      </div>
+      <SectionSurpriseMessage />
     </div>
-  </template>
+  </div>
 </template>
