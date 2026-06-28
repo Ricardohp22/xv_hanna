@@ -7,7 +7,7 @@ const whatsappContacts = [
 ]
 
 function whatsappUrl(phone: string): string {
-  const message = encodeURIComponent('Hola, quiero confirmar la asistencia a los XV de Hannah de las siguientes personas: ')
+  const message = encodeURIComponent('Hola, gracias por la invitacion! me gustaría confirmar la asistencia de las siguientes personas a los XV de Hannah: ')
   return `https://wa.me/${phone}?text=${message}`
 }
 </script>
