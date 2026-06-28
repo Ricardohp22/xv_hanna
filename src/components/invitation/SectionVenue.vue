@@ -144,12 +144,12 @@ function venueMapsUrl(venue: VenueRow): string {
 <template>
   <section
     id="fecha-lugar"
-    class="relative bg-gradient-to-b from-white/70 via-transparent to-white/50 px-3 py-4 sm:px-4 sm:py-8 md:px-5 md:py-10"
+    class="relative  px-3 py-4 sm:px-4 sm:py-8 md:px-5 md:py-10"
   >
     <div class="mx-auto max-w-3xl">
       <!-- Tarjeta principal: título, fecha, calendario del mes, misa, fiesta -->
       <div
-        class="rounded-3xl border border-lilac-200 bg-white/95 px-4 py-6 shadow-paper sm:px-6 sm:py-8 md:px-8 md:py-9"
+        class="rounded-3xl border border-lilac-200/75 bg-white/80 px-4 py-6 shadow-paper sm:px-6 sm:py-8 md:px-8 md:py-9"
       >
         <h2 class="text-center font-display text-4xl text-lilac-700 sm:text-5xl">¿Cuándo y dónde?</h2>
         
@@ -180,7 +180,7 @@ function venueMapsUrl(venue: VenueRow): string {
                   ? 'text-transparent'
                   : c.isEvent
                     ? 'bg-lilac-500 font-bold text-white shadow-md'
-                    : 'bg-white/70 text-slate-700 backdrop-blur-sm'
+                    : 'bg-white/80 text-slate-700 backdrop-blur-sm'
               "
             >
               {{ c.day != null ? c.day : '' }}
@@ -254,26 +254,26 @@ function venueMapsUrl(venue: VenueRow): string {
       </div>
 
       <div
-        class="mt-5 rounded-3xl border border-lilac-200/70 bg-white/75 px-3 py-4 shadow-paper backdrop-blur-[2px] sm:mt-6 sm:px-5 sm:py-6 md:px-6"
+        class="mt-5 rounded-3xl border border-lilac-200/60 bg-white/80 px-3 py-4 shadow-paper backdrop-blur-[2px] sm:mt-6 sm:px-5 sm:py-6 md:px-6"
       >
         <p class="text-center font-script text-xl text-lilac-600/90 sm:text-2xl">{{ countdownTitle }}</p>
         <div
           v-if="countdown"
           class="mt-4 flex items-stretch gap-1.5 font-sans text-center sm:mt-5 sm:gap-2.5"
         >
-          <div class="flex min-w-0 flex-1 flex-col justify-center rounded-xl border border-lilac-200/60 bg-white/45 px-2 py-2 shadow-sm backdrop-blur-sm sm:rounded-2xl sm:bg-white/65 sm:px-3 sm:py-3">
+          <div class="flex min-w-0 flex-1 flex-col justify-center rounded-xl border border-lilac-200/60 bg-white/80 px-2 py-2 shadow-sm backdrop-blur-sm sm:rounded-2xl sm:bg-white/80 sm:px-3 sm:py-3">
             <p class="text-xl font-bold leading-none text-lilac-700 sm:text-3xl">{{ countdown.days }}</p>
             <p class="mt-1 text-[0.62rem] uppercase tracking-[0.18em] text-slate-500 sm:text-xs sm:tracking-wide">días</p>
           </div>
-          <div class="flex min-w-0 flex-1 flex-col justify-center rounded-xl border border-lilac-200/60 bg-white/45 px-2 py-2 shadow-sm backdrop-blur-sm sm:rounded-2xl sm:bg-white/65 sm:px-3 sm:py-3">
+          <div class="flex min-w-0 flex-1 flex-col justify-center rounded-xl border border-lilac-200/60 bg-white/80 px-2 py-2 shadow-sm backdrop-blur-sm sm:rounded-2xl sm:bg-white/80 sm:px-3 sm:py-3">
             <p class="text-xl font-bold leading-none text-lilac-700 sm:text-3xl">{{ countdown.hours }}</p>
             <p class="mt-1 text-[0.62rem] uppercase tracking-[0.18em] text-slate-500 sm:text-xs sm:tracking-wide">horas</p>
           </div>
-          <div class="flex min-w-0 flex-1 flex-col justify-center rounded-xl border border-lilac-200/60 bg-white/45 px-2 py-2 shadow-sm backdrop-blur-sm sm:rounded-2xl sm:bg-white/65 sm:px-3 sm:py-3">
+          <div class="flex min-w-0 flex-1 flex-col justify-center rounded-xl border border-lilac-200/60 bg-white/80 px-2 py-2 shadow-sm backdrop-blur-sm sm:rounded-2xl sm:bg-white/80 sm:px-3 sm:py-3">
             <p class="text-xl font-bold leading-none text-lilac-700 sm:text-3xl">{{ countdown.minutes }}</p>
             <p class="mt-1 text-[0.62rem] uppercase tracking-[0.18em] text-slate-500 sm:text-xs sm:tracking-wide">min</p>
           </div>
-          <div class="flex min-w-0 flex-1 flex-col justify-center rounded-xl border border-lilac-200/60 bg-white/45 px-2 py-2 shadow-sm backdrop-blur-sm sm:rounded-2xl sm:bg-white/65 sm:px-3 sm:py-3">
+          <div class="flex min-w-0 flex-1 flex-col justify-center rounded-xl border border-lilac-200/60 bg-white/80 px-2 py-2 shadow-sm backdrop-blur-sm sm:rounded-2xl sm:bg-white/80 sm:px-3 sm:py-3">
             <p class="text-xl font-bold leading-none text-lilac-700 sm:text-3xl">{{ countdown.seconds }}</p>
             <p class="mt-1 text-[0.62rem] uppercase tracking-[0.18em] text-slate-500 sm:text-xs sm:tracking-wide">seg</p>
           </div>
@@ -284,7 +284,7 @@ function venueMapsUrl(venue: VenueRow): string {
         </p>
       </div>
 
-      <!-- <div class="mt-12 rounded-3xl border border-lilac-200 bg-white/95 px-4 py-6 shadow-paper sm:px-5 sm:py-7 md:px-6">
+      <!-- <div class="mt-12 rounded-3xl border border-lilac-200/75 bg-white/80 px-4 py-6 shadow-paper sm:px-5 sm:py-7 md:px-6">
         <h3 class="text-center font-display text-3xl text-lilac-700">Indicaciones adicionales</h3>
         <p class="mt-4 font-sans text-base leading-relaxed text-slate-700">
           {{

@@ -21,9 +21,7 @@ function whatsappUrl(phone: string): string {
       Para nosotros es muy importante saber si podrás acompañarnos, así podremos preparar tu lugar con mucho
       cariño y organizar cada detalle de esta noche tan especial. Por favor haznos saber lo antes posible quienes podrán asistir, podrás hacerlo en cualquiera de los siguientes números.
     </p>
-    <p class="mt-6 text-center font-script text-2xl text-rose-500">
-      ¡Tu presencia hará este día aún más bonito!
-    </p>
+
 
     <div class="mt-8 grid gap-3 sm:grid-cols-2">
       <a
@@ -32,7 +30,7 @@ function whatsappUrl(phone: string): string {
         :href="whatsappUrl(contact.phone)"
         target="_blank"
         rel="noopener noreferrer"
-        class="group rounded-3xl border border-emerald-200/80 bg-emerald-50/80 px-5 py-4 text-center shadow-sm transition hover:-translate-y-0.5 hover:border-emerald-300 hover:bg-emerald-100/80 hover:shadow-md"
+        class="group rounded-3xl border border-emerald-200/80 bg-emerald-50/60 px-5 py-4 text-center shadow-sm transition hover:-translate-y-0.5 hover:border-emerald-300 hover:bg-emerald-100/65 hover:shadow-md"
       >
         <span class="block font-sans text-xs font-semibold uppercase tracking-[0.22em] text-emerald-700/80">
           Confirmar con

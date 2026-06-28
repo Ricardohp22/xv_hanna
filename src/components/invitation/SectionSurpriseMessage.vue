@@ -100,7 +100,7 @@ function submitText() {
       </button>
     </div>
 
-    <div v-else class="mt-6 rounded-2xl border border-lilac-200/85 bg-white/75 p-5 text-left shadow-sm backdrop-blur-sm">
+    <div v-else class="mt-6 rounded-2xl border border-lilac-200/85 bg-white/80 p-5 text-left shadow-sm backdrop-blur-sm">
       <p class="font-sans text-sm leading-relaxed text-slate-700">
         Esta versión de la invitación funciona con datos fijos y
         <span class="font-semibold">no guarda archivos en servidor</span>

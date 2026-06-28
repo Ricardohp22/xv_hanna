@@ -98,10 +98,10 @@ function addExtraGuest() {
 <template>
   <section
     id="confirmacion"
-    class="flex items-start justify-center bg-gradient-to-b from-white/90 via-white/50 to-transparent px-3 py-4 sm:px-4 sm:py-8 md:px-5 md:py-10"
+    class="flex items-start justify-center bg-gradient-to-b from-white/80 via-white/80 to-transparent px-3 py-4 sm:px-4 sm:py-8 md:px-5 md:py-10"
   >
     <div
-      class="w-full max-w-2xl rounded-3xl border border-lilac-200/80 bg-white/95 px-5 py-8 shadow-paper backdrop-blur-sm sm:px-7 sm:py-10 md:px-9 md:py-12"
+      class="w-full max-w-2xl rounded-3xl border border-lilac-200/80 bg-white/80 px-5 py-8 shadow-paper backdrop-blur-sm sm:px-7 sm:py-10 md:px-9 md:py-12"
     >
       <h2 class="text-center font-display text-3xl text-lilac-700 sm:text-4xl">
         Confirma tu asistencia
@@ -129,7 +129,7 @@ function addExtraGuest() {
         <li
           v-for="g in displayGuests"
           :key="g.id"
-          class="rounded-2xl border border-lilac-200/80 bg-white/75 p-4 shadow-sm backdrop-blur-sm sm:p-5"
+          class="rounded-2xl border border-lilac-200/80 bg-white/80 p-4 shadow-sm backdrop-blur-sm sm:p-5"
         >
           <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div class="min-w-0 flex-1">
