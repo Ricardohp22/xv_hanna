@@ -19,7 +19,7 @@ function whatsappUrl(phone: string): string {
     </h2>
     <p class="mt-5 text-center font-sans text-base leading-relaxed text-slate-700">
       Para nosotros es muy importante saber si podrás acompañarnos, así podremos preparar tu lugar con mucho
-      cariño y organizar cada detalle de esta noche tan especial. Por favor haznos saber lo antes posible quienes podrán asistir.
+      cariño y organizar cada detalle de esta noche tan especial. Por favor haznos saber lo antes posible quienes podrán asistir, podrás hacerlo en cualquiera de los siguientes números.
     </p>
     <p class="mt-6 text-center font-script text-2xl text-rose-500">
       ¡Tu presencia hará este día aún más bonito!
@@ -37,7 +37,7 @@ function whatsappUrl(phone: string): string {
         <span class="block font-sans text-xs font-semibold uppercase tracking-[0.22em] text-emerald-700/80">
           Confirmar con
         </span>
-        <span class="mt-1 block font-elegant text-2xl font-semibold italic text-slate-800">
+        <span class="mt-1 block font-elegant text-xl font-semibold italic text-emerald-800">
           {{ contact.name }}
         </span>
         <span class="mt-1 block font-sans text-sm font-semibold text-emerald-800">
