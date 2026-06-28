@@ -13,7 +13,7 @@ function whatsappUrl(phone: string): string {
 </script>
 
 <template>
-  <SectionPaper id="confirmar-asistencia">
+  <SectionPaper id="confirmar-asistencia" highlight="amber">
     <h2 class="text-center font-display text-3xl leading-tight text-rose-500 sm:text-4xl">
       Confirma tu asistencia
     </h2>
@@ -21,7 +21,7 @@ function whatsappUrl(phone: string): string {
       Para nosotros es muy importante saber si podrás acompañarnos, así podremos preparar tu lugar con mucho
       cariño y organizar cada detalle de esta noche tan especial. Por favor haznos saber lo antes posible quienes podrán asistir.
     </p>
-    <p class="mt-6 text-center font-script text-2xl text-indigo-900">
+    <p class="mt-6 text-center font-script text-2xl text-rose-500">
       ¡Tu presencia hará este día aún más bonito!
     </p>
 
