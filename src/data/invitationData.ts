@@ -30,7 +30,7 @@ export const invitationData: InvitationBundle = {
     },
     {
       id: 2,
-      name: 'Salones Real De Santa Clara (Salón 1)',
+      name: 'Salones Santa Clara (Salón 1)',
       address: 'Blvd. Torres Landa #1702-9, Col. Santa Clara',
       mapUrl: 'https://maps.app.goo.gl/PkHoxqygMnksyoT96',
       type: 'fiesta',

@@ -25,7 +25,7 @@ defineProps<{
           />
 
           <p
-            class="mt-3 shrink-0 bg-purple-900 bg-clip-text font-display text-5xl leading-[0.95] text-transparent sm:text-6xl md:text-7xl"
+            class="mt-2 shrink-0 overflow-visible bg-purple-900 bg-clip-text px-1 py-2 font-display text-5xl leading-[1.18] text-transparent sm:mt-2 sm:text-6xl sm:leading-[1.16] md:text-7xl md:leading-[1.14]"
           >
             {{ quinceName || 'Hannah' }}
           </p>
