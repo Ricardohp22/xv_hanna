@@ -64,7 +64,7 @@ export const invitationData: InvitationBundle = {
     {
       id: 3,
       title: 'Entrada de la quinceañera',
-      description: 'Llega el momento de recibir a Hanna con aplausos, sonrisas y toda la emoción que se merece.',
+      description: '¡Llega el momento de recibir a Hannah con aplausos, sonrisas y toda la emoción que se merece!',
       start_time: '2026-07-18T19:30:00',
       end_time: null,
     },
@@ -85,7 +85,7 @@ export const invitationData: InvitationBundle = {
     {
       id: 6,
       title: 'Brindis',
-      description: 'Levantemos la copa por Hanna, por su felicidad y por todos los recuerdos que vamos a crear esta noche.',
+      description: 'Levantemos la copa por Hannah, por su felicidad y por todos los recuerdos que vamos a crear esta noche.',
       start_time: '2026-07-18T21:15:00',
       end_time: null,
     },

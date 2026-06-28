@@ -2,7 +2,6 @@
 import { computed, ref } from 'vue'
 import EnvelopeGate from '../components/invitation/EnvelopeGate.vue'
 import InvitationPastelBackdrop from '../components/invitation/InvitationPastelBackdrop.vue'
-import CarouselHero from '../components/invitation/CarouselHero.vue'
 import SectionFormalInvite from '../components/invitation/SectionFormalInvite.vue'
 import SectionParents from '../components/invitation/SectionParents.vue'
 import SectionSponsors from '../components/invitation/SectionSponsors.vue'
@@ -134,7 +133,7 @@ const quinceName = computed(() => bundle.event?.name || 'Hannah')
 
       <SectionVenue :venues="bundle.venues" :event-date="bundle.event?.event_date || null" />
 
-      <CarouselHero :slides="bundle.carousel?.slides || []" />
+      <!-- <CarouselHero :slides="bundle.carousel?.slides || []" /> -->
 
       <SectionSchedule :items="bundle.schedule" />
 
